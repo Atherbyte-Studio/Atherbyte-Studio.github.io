@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found | Atherbyte Studio</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0B0B0F">
+  <meta name="color-scheme" content="dark">
+
+  <!-- This page can be shown for any wrong address on the site, so every path below
+       starts with "/" (the site's main folder) instead of being relative. -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/assets/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .not-found { min-height: calc(100vh - var(--header-h)); display: grid; align-items: center; padding-block: 48px;
+      background: radial-gradient(55% 50% at 50% 30%, rgba(136, 92, 255, 0.2), transparent 70%), var(--bg); }
+    .not-found .container { text-align: center; }
+    .not-found .eyebrow { justify-content: center; }
+    .not-found .section-lead { margin-inline: auto; margin-bottom: 32px; }
+    .not-found-mark { width: 120px; margin: 0 auto 24px; mix-blend-mode: lighten; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="Atherbyte Studio, go to the home page">
+        <img src="/assets/images/atherbyte-mark.webp" alt="" width="40" height="40">
+        <span class="brand-name">Atherbyte <span>Studio</span></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="not-found">
+    <div class="container">
+      <img class="not-found-mark" src="/assets/images/atherbyte-mark.webp" alt="" width="160" height="160">
+      <p class="eyebrow">Error 404</p>
+      <h1 class="section-title">This page doesn't exist.</h1>
+      <p class="section-lead">The link may be old or mistyped. Head back to the home page to find our games and projects.</p>
+      <a class="btn btn-primary" href="/">Back to home</a>
+    </div>
+  </main>
+</body>
+</html>
