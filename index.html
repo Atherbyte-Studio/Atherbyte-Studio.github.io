@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Atherbyte Studio | Browser Games and Digital Experiences</title>
+  <meta name="description" content="Atherbyte Studio is an independent studio making browser games and interactive web experiences. Play Grid Snake and Stop the Timer, or talk to us about your project.">
+  <meta name="theme-color" content="#0B0B0F">
+  <meta name="color-scheme" content="dark">
+
+  <!-- When atherbyte.online is connected, change the two https://atherbyte-studio.github.io/ addresses
+       below (canonical and og:url) and the og:image / twitter:image addresses to the new domain. -->
+  <link rel="canonical" href="https://atherbyte-studio.github.io/">
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="assets/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+  <!-- Link previews (Open Graph / social cards) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Atherbyte Studio">
+  <meta property="og:title" content="Atherbyte Studio | Browser Games and Digital Experiences">
+  <meta property="og:description" content="An independent studio making browser games and interactive web experiences.">
+  <meta property="og:url" content="https://atherbyte-studio.github.io/">
+  <meta property="og:image" content="https://atherbyte-studio.github.io/assets/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Atherbyte Studio logo on a dark background">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Atherbyte Studio | Browser Games and Digital Experiences">
+  <meta name="twitter:description" content="An independent studio making browser games and interactive web experiences.">
+  <meta name="twitter:image" content="https://atherbyte-studio.github.io/assets/images/og-image.png">
+
+  <!-- Marks the page as "JavaScript is available" so the mobile menu can collapse.
+       Without JavaScript, the menu simply stays open. -->
+  <script>document.documentElement.classList.add("js");</script>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ===================== HEADER / NAVIGATION ===================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#home" aria-label="Atherbyte Studio, back to the top">
+        <img src="assets/images/atherbyte-mark.webp" alt="" width="40" height="40">
+        <span class="brand-name">Atherbyte <span>Studio</span></span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main">
+        <ul class="nav-list">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#games">Games</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li data-portfolio-link hidden><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ===================== HOME / HERO ===================== -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Independent digital studio</p>
+          <h1 id="hero-title">We build <span class="grad">games</span> and digital experiences for the browser.</h1>
+          <p class="hero-lead">Atherbyte Studio is an independent studio creating browser games and interactive web projects. Play what we've made, or tell us what you'd like to build.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#games">Explore Our Games</a>
+            <a class="btn btn-secondary" href="#contact">Work With Us</a>
+          </div>
+        </div>
+
+        <div class="hero-logo">
+          <img src="assets/images/atherbyte-logo-lockup.webp"
+               alt="Atherbyte Studio logo: a violet letter A circled by an orbital ring, with the words Atherbyte Studio and the tagline Ideas, Games, Reality"
+               width="900" height="787" fetchpriority="high">
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== GAMES ===================== -->
+    <section class="section" id="games" aria-labelledby="games-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Our games</p>
+          <h2 class="section-title" id="games-title">Play something we've built.</h2>
+          <p class="section-lead">Two browser games you can play right now. Each one opens in a new tab.</p>
+        </div>
+
+        <!-- The cards are built from js/games-data.js -->
+        <div class="game-grid" id="game-grid"></div>
+
+        <noscript>
+          <p class="section-lead">JavaScript is turned off, so the game cards can't load. You can still play directly:
+            <a href="https://atherbyte-studio.github.io/grid-snake/">Grid Snake</a> or
+            <a href="https://atherbyte-studio.github.io/Feel-the-time/">Stop the Timer</a>.</p>
+        </noscript>
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section class="section section-alt" id="about" aria-labelledby="about-title">
+      <div class="container about-grid">
+        <div class="reveal">
+          <p class="eyebrow">About the studio</p>
+          <h2 class="section-title" id="about-title">An independent studio, building for the browser.</h2>
+          <p class="section-lead">Atherbyte Studio is an independent studio focused on games, software and creative digital products. We make things that run right in your browser, with nothing to download or install.</p>
+          <p class="section-lead about-second">So far we've released two games, Grid Snake and Stop the Timer. Next, we're opening up to custom projects for people and businesses who want something built for them.</p>
+        </div>
+
+        <ul class="focus-list">
+          <li class="focus-item reveal">
+            <h3>Games</h3>
+            <p>Browser games that are ready to play the moment the page loads.</p>
+          </li>
+          <li class="focus-item reveal">
+            <h3>Software</h3>
+            <p>Web-based tools and applications that work in any modern browser.</p>
+          </li>
+          <li class="focus-item reveal">
+            <h3>Creative digital products</h3>
+            <p>Interactive projects where design and code are built together.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== SERVICES ===================== -->
+    <section class="section" id="services" aria-labelledby="services-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Services</p>
+          <h2 class="section-title" id="services-title">What we can build with you.</h2>
+          <p class="section-lead">We're growing our client work. If your project is one of these, we'd be happy to talk about whether we're a good fit.</p>
+        </div>
+
+        <div class="service-grid">
+          <article class="service-card reveal">
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7.5 10.5v4M5.5 12.5h4"/><circle cx="15.8" cy="11.6" r=".7" fill="currentColor"/><circle cx="18.2" cy="13.6" r=".7" fill="currentColor"/></svg>
+            </div>
+            <h3>Custom browser games</h3>
+            <p>Playable games built for the web, from simple arcade ideas to more involved projects.</p>
+            <a class="service-inquiry link-arrow" data-service="Custom browser game" href="#contact" hidden>Ask about this</a>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><circle cx="6.2" cy="6.5" r=".6" fill="currentColor"/><circle cx="8.6" cy="6.5" r=".6" fill="currentColor"/></svg>
+            </div>
+            <h3>Website design and development</h3>
+            <p>Clean, responsive websites that work on phones, tablets and desktops.</p>
+            <a class="service-inquiry link-arrow" data-service="Website design and development" href="#contact" hidden>Ask about this</a>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5l14 7-6 2.2-2.2 6z"/></svg>
+            </div>
+            <h3>Interactive web experiences</h3>
+            <p>Interactive pages, tools and visual experiences that go beyond a static site.</p>
+            <a class="service-inquiry link-arrow" data-service="Interactive web experience" href="#contact" hidden>Ask about this</a>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>
+            </div>
+            <h3>Small custom digital projects</h3>
+            <p>Have a smaller idea? Tell us what you need and we'll say honestly whether it's a fit.</p>
+            <a class="service-inquiry link-arrow" data-service="Small custom project" href="#contact" hidden>Ask about this</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PORTFOLIO (hidden until js/site-config.js has clientProjects) ===================== -->
+    <section class="section section-alt" id="portfolio" aria-labelledby="portfolio-title" hidden>
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Portfolio</p>
+          <h2 class="section-title" id="portfolio-title">Client projects.</h2>
+        </div>
+        <div class="game-grid" id="portfolio-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===================== TESTIMONIALS (hidden until js/site-config.js has testimonials) ===================== -->
+    <section class="section" id="testimonials" aria-labelledby="testimonials-title" hidden>
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Kind words</p>
+          <h2 class="section-title" id="testimonials-title">What clients say.</h2>
+        </div>
+        <div class="testimonial-grid" id="testimonial-list"></div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section class="section" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="contact-card reveal">
+          <p class="eyebrow">Contact</p>
+          <h2 class="section-title" id="contact-title">Have a project in mind?</h2>
+          <p class="section-lead">Whether it's a browser game, a website or something in between, we'd like to hear about it.</p>
+
+          <!-- Shown until a real email address is added in js/site-config.js -->
+          <div class="contact-state" id="contact-pending">
+            <p class="contact-note"><strong>Contact details are coming soon.</strong> We're getting our inquiry channels ready. Until then, you're welcome to try our games.</p>
+            <div class="contact-actions">
+              <a class="btn btn-secondary" href="#games">Play our games</a>
+            </div>
+          </div>
+
+          <!-- Revealed automatically once an email address is set in js/site-config.js -->
+          <div class="contact-state" id="contact-ready" hidden>
+            <div class="contact-actions">
+              <a class="btn btn-primary" id="contact-email-link" href="#contact">Email us</a>
+              <button class="btn btn-secondary" type="button" id="copy-email">Copy email address</button>
+            </div>
+            <p class="contact-note">Or write to <span class="contact-email" id="contact-email-text"></span></p>
+            <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+          </div>
+
+          <!-- Revealed automatically once social links are added in js/site-config.js -->
+          <div class="contact-social" id="contact-social" hidden>
+            <p class="social-label">Find us online</p>
+            <ul class="social-list" id="contact-social-list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="#home" aria-label="Atherbyte Studio, back to the top">
+          <img src="assets/images/atherbyte-mark.webp" alt="" width="40" height="40" loading="lazy">
+          <span class="brand-name">Atherbyte <span>Studio</span></span>
+        </a>
+        <p>An independent studio for browser games and interactive web experiences.</p>
+      </div>
+
+      <nav aria-label="Footer">
+        <p class="footer-heading">Explore</p>
+        <ul class="footer-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#games">Games</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li data-portfolio-link hidden><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div id="footer-social" hidden>
+        <p class="footer-heading">Online</p>
+        <ul class="social-list" id="footer-social-list"></ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span data-year>2026</span> Atherbyte Studio. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Order matters: the two data files first, then main.js, which uses them. -->
+  <script src="js/site-config.js"></script>
+  <script src="js/games-data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
