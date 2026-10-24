@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-label="A purple timer ring on a dark background showing 3.00, almost complete.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1A1230"/>
+      <stop offset="1" stop-color="#0D0D15"/>
+    </linearGradient>
+    <linearGradient id="arc" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B79CFF"/>
+      <stop offset="1" stop-color="#6A3BF2"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#885CFF" stop-opacity=".40"/>
+      <stop offset="1" stop-color="#885CFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dot-glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#D66BFF" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#D66BFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="400" fill="url(#bg)"/>
+  <circle cx="320" cy="200" r="230" fill="url(#glow)"/>
+
+  <!-- Tick marks: 60 small dashes around the ring -->
+  <circle cx="320" cy="200" r="150" fill="none" stroke="#885CFF" stroke-opacity=".38" stroke-width="8" stroke-dasharray="2 13.7" transform="rotate(-90 320 200)"/>
+
+  <!-- Ring track -->
+  <circle cx="320" cy="200" r="120" fill="none" stroke="#25253A" stroke-width="14"/>
+
+  <!-- Progress: three quarters of the ring, starting at the top -->
+  <circle cx="320" cy="200" r="120" fill="none" stroke="url(#arc)" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="565.5 188.5" transform="rotate(-90 320 200)"/>
+
+  <!-- Marker at the end of the arc -->
+  <circle cx="200" cy="200" r="30" fill="url(#dot-glow)"/>
+  <circle cx="200" cy="200" r="9" fill="#D66BFF"/>
+
+  <!-- Time readout -->
+  <text x="320" y="218" text-anchor="middle" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="62" font-weight="700" fill="#F5F5F7">3.00</text>
+  <text x="320" y="252" text-anchor="middle" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="16" letter-spacing="6" fill="#B79CFF">SECONDS</text>
+</svg>
