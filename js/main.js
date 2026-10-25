@@ -72,6 +72,13 @@
       link.appendChild(document.createTextNode(buttonLabel));
       link.appendChild(make("span", "visually-hidden", " " + item.title + " (opens in a new tab)"));
       actions.appendChild(link);
+      // Optional "Details" button to the game's page on this site (only for addresses that start with "/").
+      if (typeof item.page === "string" && /^\/(?!\/)/.test(item.page)) {
+        var more = make("a", "btn btn-secondary", "Details");
+        more.href = item.page;
+        more.appendChild(make("span", "visually-hidden", " about " + item.title));
+        actions.appendChild(more);
+      }
       body.appendChild(actions);
     }
 

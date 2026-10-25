@@ -16,6 +16,7 @@ Live address: `https://atherbyte.online/`
 ├── sitemap.xml           List of the pages search engines should know about (add each new game's page here)
 ├── CNAME                 Connects the custom domain. Leave it alone
 ├── .nojekyll             Empty file. Tells GitHub to publish the files exactly as they are
+├── games/                One info page per game (games/grid-snake/, games/stop-the-timer/)
 ├── css/
 │   └── styles.css        All the styling. Colours and sizes are at the top of the file
 ├── js/
@@ -51,14 +52,17 @@ The "Email us" button, the "Copy email address" button and the "Ask about this" 
 Instagram and Facebook are written directly in `index.html`, in two places: the Contact section and the footer (search the file for `instagram`). To change a link, edit its `href` in both places. To add another profile, copy one `<li>...</li>` line in each place and change the address, the label and the icon. Only use real, official profiles. Keep `target="_blank" rel="noopener noreferrer"` so links open in a new tab safely.
 
 ### Add a third game
-1. Add the game's picture to `assets/images/games/` (a 16:10 shape such as 640 x 400 pixels works best; JPG, PNG, WebP and SVG are all fine).
-2. In `js/games-data.js`, copy one whole `{ ... }` block, paste it after the last one (keep a comma between blocks) and change the text and the `url` (use `https://atherbyte.online/<game-folder>/`).
-3. In `sitemap.xml`, add the game's page (copy one `<url>` block).
-4. In `index.html`, the "About the studio" text says how many games have been released; update it when you add one.
+1. Add a screenshot of the game to `assets/images/games/` (16:10, 1280 x 800 WebP works well) and, for its page, a second one of the game being played.
+2. In `js/games-data.js`, copy one whole `{ ... }` block, paste it after the last one (keep a comma between blocks) and change the text, the `image`, the `page` (for example `"/games/my-game/"`) and the `url` (use `https://atherbyte.online/<game-folder>/`).
+3. Create the game's page: copy the folder `games/grid-snake/` to `games/my-game/` and edit `games/my-game/index.html`: the title, description, `canonical`, `og:url`, the headings and texts, the images and the two "Play Now" links. Every page must have its **own** `canonical` (its own address, never the home page's). Only describe what the game really does.
+4. In `sitemap.xml`, add the game's studio page and the game itself (copy `<url>` blocks).
+5. In `index.html`, copy one game card into the fallback list (see below) and update the "About the studio" text, which says how many games have been released.
 
-There is a longer explanation at the top of `games-data.js`. The new card appears on the site. A block that has no `title` or `description` is skipped, so it can never break the other games.
+There is a longer explanation at the top of `games-data.js`. The new card appears on the site with a **Play Now** and a **Details** button. A block that has no `title` or `description` is skipped, so it can never break the other games.
 
-`index.html` also contains a ready-made copy of the game cards (inside `<div class="game-grid" id="game-grid">`). It is a safety net: it is what visitors see if JavaScript does not run, and the script replaces it with the cards from `games-data.js` when it does. For a complete safety net, copy one `<article class="game-card">...</article>` block there too and change its text and links.
+`index.html` also contains a ready-made copy of the game cards (inside `<div class="game-grid" id="game-grid">`). It is a safety net: it is what visitors see if JavaScript does not run, and the script replaces it with the cards from `games-data.js` when it does.
+
+Each game's own page (in its own repository) should also carry its own `canonical`, Open Graph tags, icons and a link back to `https://atherbyte.online/`.
 
 ### Show real testimonials
 Add real customer feedback to `testimonials: [ ... ]` in `js/site-config.js`. The Testimonials section is only added to the page once there is at least one.

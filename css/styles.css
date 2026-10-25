@@ -16,6 +16,7 @@
     12. Contact
     13. Footer
     14. Motion (animations, reduced-motion support)
+   15. Game pages (/games/<name>/)
    ===================================================================== */
 
 
@@ -510,7 +511,7 @@ a:hover { color: #fff; }
   border-radius: 8px;
 }
 
-.game-actions { margin-top: auto; padding-top: 12px; }
+.game-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 12px; }
 
 /* On phones the Play button spans the card, an easy, obvious tap target. */
 @media (max-width: 559px) {
@@ -746,4 +747,70 @@ a:hover { color: #fff; }
   .service-card:hover,
   .btn:hover { transform: none; }
   .game-card:hover .game-media img { transform: none; }
+}
+
+/* ---------- 15. Game pages (/games/<name>/) ---------- */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.breadcrumb li + li::before { content: "/"; margin-right: 8px; opacity: 0.5; }
+.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--text); text-decoration: underline; }
+.breadcrumb [aria-current] { color: var(--text); }
+
+.game-hero { padding-top: clamp(32px, 5vw, 64px); }
+.game-hero-grid { display: grid; gap: 32px; align-items: center; grid-template-columns: minmax(0, 1fr); }
+.game-hero-copy .chip { display: inline-block; margin-bottom: 18px; }
+.game-hero-copy .hero-actions { margin-top: 28px; }
+
+.shot {
+  margin: 0;
+  overflow: hidden;
+  background: #0E0E16;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 60px -34px rgba(136, 92, 255, 0.55);
+}
+.shot img { width: 100%; height: auto; }
+.shot figcaption { padding: 12px 18px; color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--line); }
+
+.howto-grid { display: grid; gap: 36px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+.steps { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.steps li {
+  position: relative;
+  padding: 18px 20px 18px 66px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.steps li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 18px; top: 16px;
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  color: var(--accent-soft);
+  font: 600 0.9rem/1 var(--mono);
+  background: rgba(136, 92, 255, 0.14);
+  border: 1px solid rgba(136, 92, 255, 0.35);
+  border-radius: 50%;
+}
+.steps strong { display: block; margin-bottom: 2px; color: var(--text); }
+
+.know-list { max-width: 760px; }
+.cta-actions { margin-top: 28px; }
+
+@media (min-width: 900px) {
+  .game-hero-grid { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 56px; }
+  .howto-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
 }
