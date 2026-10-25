@@ -252,6 +252,11 @@ a:hover { color: #fff; }
   .nav-list a { padding-inline: 16px; }
 }
 
+/* Very narrow phones: keep the logo and the menu button on one line. */
+@media (max-width: 359px) {
+  .brand { gap: 8px; letter-spacing: 0.1em; font-size: 0.76rem; }
+}
+
 
 /* ---------- 5. Buttons and links ---------- */
 .btn {
@@ -447,6 +452,11 @@ a:hover { color: #fff; }
   border-color: rgba(136, 92, 255, 0.55);
   box-shadow: 0 22px 50px -22px rgba(136, 92, 255, 0.6);
 }
+/* Keyboard users get the same highlight when the Play button inside the card has focus. */
+.game-card:focus-within {
+  border-color: rgba(136, 92, 255, 0.55);
+  box-shadow: 0 22px 50px -22px rgba(136, 92, 255, 0.6);
+}
 
 .game-media {
   aspect-ratio: 16 / 10;
@@ -501,6 +511,11 @@ a:hover { color: #fff; }
 }
 
 .game-actions { margin-top: auto; padding-top: 12px; }
+
+/* On phones the Play button spans the card, an easy, obvious tap target. */
+@media (max-width: 559px) {
+  .game-actions .btn { width: 100%; }
+}
 
 
 /* ---------- 9. About ---------- */
@@ -570,7 +585,7 @@ a:hover { color: #fff; }
 }
 .service-card h3 { font-size: 1.15rem; line-height: 1.3; }
 .service-card p { margin: 0; color: var(--muted); }
-.service-inquiry { margin-top: auto; padding-top: 10px; }
+.service-inquiry { margin-top: auto; min-height: 44px; padding-top: 10px; }   /* 44px = comfortable tap target */
 
 
 /* ---------- 11. Testimonials (only shown when real ones are added) ---------- */
@@ -657,7 +672,9 @@ a:hover { color: #fff; }
 }
 .footer-links { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
 .footer-links a {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;                    /* comfortable tap target */
   padding: 6px 0;
   color: var(--muted);
   text-decoration: none;
@@ -710,6 +727,14 @@ a:hover { color: #fff; }
 @keyframes rise {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: none; }
+}
+
+/* Touch screens have no real "hover", so skip the lift that would otherwise stay stuck after a tap. */
+@media (hover: none) {
+  .game-card:hover,
+  .service-card:hover,
+  .btn:hover { transform: none; }
+  .game-card:hover .game-media img { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

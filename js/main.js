@@ -4,7 +4,7 @@
 
     1. buildGameCards   Builds the cards from js/games-data.js
     2. applyConfig      Adds the email buttons / testimonials / portfolio to the
-                        page only when js/site-config.js contains real details
+                        page from the real details in js/site-config.js
     3. initMenu         The mobile menu button
     4. initActiveLink   Highlights the menu link of the section you are viewing
     5. initYear         Keeps the footer year current
@@ -44,6 +44,10 @@
       img.height = 400;
       img.loading = "lazy";
       img.decoding = "async";
+      // If a picture is missing or fails to load, drop the empty picture box instead of showing a broken image.
+      img.addEventListener("error", function () {
+        if (media.parentNode) { media.parentNode.removeChild(media); }
+      });
       media.appendChild(img);
       card.appendChild(media);
     }
@@ -78,9 +82,23 @@
   function buildGameCards() {
     var grid = $("#game-grid");
     if (!grid) { return; }
-    if (!GAMES.length) { return; }   // keep the ready-made cards from index.html
+
+    // Only entries that have a title and a description can become a card. A broken or
+    // half-finished entry is skipped; it never stops the other games from showing.
+    var valid = (Array.isArray(GAMES) ? GAMES : []).filter(function (game) {
+      return game && typeof game.title === "string" && game.title &&
+             typeof game.description === "string" && game.description;
+    });
+    if (!valid.length) { return; }   // keep the ready-made cards from index.html
+
+    var cards = [];
+    valid.forEach(function (game) {
+      try { cards.push(buildCard(game, "Play Now")); } catch (e) { /* skip this one game */ }
+    });
+    if (!cards.length) { return; }
+
     while (grid.firstChild) { grid.removeChild(grid.firstChild); }
-    GAMES.forEach(function (game) { grid.appendChild(buildCard(game, "Play Now")); });
+    cards.forEach(function (card) { grid.appendChild(card); });
   }
 
   /* ---------- 2. Settings from js/site-config.js ---------- */
@@ -117,9 +135,9 @@
     slot.appendChild(note);
     slot.appendChild(status);
 
-    // Replace the "coming soon" note
-    var pending = $("#contact-pending");
-    if (pending && pending.parentNode) { pending.parentNode.removeChild(pending); }
+    // Replace the plain no-JavaScript email link with the full set of buttons
+    var fallback = $("#contact-fallback");
+    if (fallback && fallback.parentNode) { fallback.parentNode.removeChild(fallback); }
 
     // "Ask about this" link on every service card
     $all(".service-card").forEach(function (card) {
@@ -304,10 +322,18 @@
   }
 
   /* ---------- run everything ---------- */
-  buildGameCards();   // first, so the cards exist before the fade-in is set up
-  applyConfig();
-  initMenu();
-  initActiveLink();
-  initYear();
-  initReveal();
+  // Each job runs on its own, so an error in one (for example bad data for a game)
+  // can never stop the menu, the email buttons or the page from working.
+  function run(job) {
+    try { job(); } catch (error) {
+      if (window.console && console.error) { console.error("Atherbyte site:", error); }
+    }
+  }
+
+  run(buildGameCards);   // first, so the cards exist before the fade-in is set up
+  run(applyConfig);
+  run(initMenu);
+  run(initActiveLink);
+  run(initYear);
+  run(initReveal);
 })();

@@ -8,11 +8,9 @@
   <meta name="theme-color" content="#0B0B0F">
   <meta name="color-scheme" content="dark">
 
-  <!-- When atherbyte.online is connected, change the two https://atherbyte-studio.github.io/ addresses
-       below (canonical and og:url) and the og:image / twitter:image addresses to the new domain. -->
- 
-<link rel="canonical" href="https://atherbyte.online/">
-
+  <!-- The site lives at https://atherbyte.online/. Canonical, og:url, og:image and twitter:image
+       must all use that address (never the old atherbyte-studio.github.io one). -->
+  <link rel="canonical" href="https://atherbyte.online/">
 
   <!-- Icons -->
   <link rel="icon" href="favicon.ico" sizes="any">
@@ -24,15 +22,35 @@
   <meta property="og:site_name" content="Atherbyte Studio">
   <meta property="og:title" content="Atherbyte Studio | Browser Games and Digital Experiences">
   <meta property="og:description" content="An independent studio making browser games and interactive web experiences.">
-  <meta property="og:url" content="https://atherbyte-studio.github.io/">
-  <meta property="og:image" content="https://atherbyte-studio.github.io/assets/images/og-image.png">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://atherbyte.online/">
+  <meta property="og:image" content="https://atherbyte.online/assets/images/og-image.png">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Atherbyte Studio logo on a dark background">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Atherbyte Studio | Browser Games and Digital Experiences">
   <meta name="twitter:description" content="An independent studio making browser games and interactive web experiences.">
-  <meta name="twitter:image" content="https://atherbyte-studio.github.io/assets/images/og-image.png">
+  <meta name="twitter:image" content="https://atherbyte.online/assets/images/og-image.png">
+  <meta name="twitter:image:alt" content="Atherbyte Studio logo on a dark background">
+
+  <!-- Structured data: only facts that are already on the page (name, address, logo, real profiles, email). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Atherbyte Studio",
+    "url": "https://atherbyte.online/",
+    "logo": "https://atherbyte.online/assets/images/apple-touch-icon.png",
+    "description": "An independent studio making browser games and interactive web experiences.",
+    "email": "atherbyte.studio@gmail.com",
+    "sameAs": [
+      "https://www.instagram.com/atherbyte.studio/",
+      "https://www.facebook.com/profile.php?id=61595599060742"
+    ]
+  }
+  </script>
 
   <!-- Marks the page as "JavaScript is available" so the mobile menu can collapse.
        Without JavaScript, the menu simply stays open. -->
@@ -97,7 +115,7 @@
         <div class="section-head reveal">
           <p class="eyebrow">Our games</p>
           <h2 class="section-title" id="games-title">Play something we've built.</h2>
-          <p class="section-lead">Two browser games you can play right now. Each one opens in a new tab.</p>
+          <p class="section-lead">Browser games you can play right now. Each one opens in a new tab.</p>
         </div>
 
         <!-- The cards are built from js/games-data.js -->
@@ -116,7 +134,7 @@
               <p class="game-desc">A browser snake game. Steer, eat to grow, and avoid the walls and your own tail. Play with solid walls or wrap-around edges.</p>
               <ul class="tag-list"><li>Classic</li><li>Time Attack</li><li>Survival</li><li>Apple Run</li></ul>
               <div class="game-actions">
-                <a class="btn btn-primary has-arrow" href="https://atherbyte-studio.github.io/grid-snake/" target="_blank" rel="noopener">Play Now<span class="visually-hidden"> Grid Snake (opens in a new tab)</span></a>
+                <a class="btn btn-primary has-arrow" href="https://atherbyte.online/grid-snake/" target="_blank" rel="noopener">Play Now<span class="visually-hidden"> Grid Snake (opens in a new tab)</span></a>
               </div>
             </div>
           </article>
@@ -131,7 +149,7 @@
               <p class="game-desc">A timing game. Start the timer, then stop it as close to the target time as you can. Pick a 1, 3 or 5 second target and build your streak.</p>
               <ul class="tag-list"><li>1, 3 or 5 second targets</li><li>Best score</li><li>Streaks</li></ul>
               <div class="game-actions">
-                <a class="btn btn-primary has-arrow" href="https://atherbyte-studio.github.io/Feel-the-time/" target="_blank" rel="noopener">Play Now<span class="visually-hidden"> Stop the Timer (opens in a new tab)</span></a>
+                <a class="btn btn-primary has-arrow" href="https://atherbyte.online/Feel-the-time/" target="_blank" rel="noopener">Play Now<span class="visually-hidden"> Stop the Timer (opens in a new tab)</span></a>
               </div>
             </div>
           </article>
@@ -223,14 +241,14 @@
           <h2 class="section-title" id="contact-title">Have a project in mind?</h2>
           <p class="section-lead">Whether it's a browser game, a website or something in between, we'd like to hear about it.</p>
 
-          <!-- No email address is published yet, so there are no email buttons or links here.
-               When a real address is added in js/site-config.js, js/main.js replaces this note
-               with the contact buttons. -->
-          <div class="contact-state" id="contact-pending">
-            <p class="contact-note"><strong>Contact details are coming soon.</strong> We're getting our inquiry channels ready. Until then, you're welcome to try our games or follow us below.</p>
+          <!-- Plain email link that works even without JavaScript. When JavaScript runs and
+               js/site-config.js has an email, js/main.js replaces this block with the same
+               button plus a "Copy email address" button. Keep the address in both places in sync. -->
+          <div class="contact-state" id="contact-fallback">
             <div class="contact-actions">
-              <a class="btn btn-secondary" href="#games">Play our games</a>
+              <a class="btn btn-primary" href="mailto:atherbyte.studio@gmail.com?subject=Project%20inquiry%20for%20Atherbyte%20Studio">Email us</a>
             </div>
+            <p class="contact-note">Or write to <span class="contact-email">atherbyte.studio@gmail.com</span></p>
           </div>
           <div id="contact-email-slot"></div>
 
@@ -272,6 +290,7 @@
       <div>
         <p class="footer-heading">Online</p>
         <ul class="social-list">
+          <li><a href="mailto:atherbyte.studio@gmail.com" aria-label="Email Atherbyte Studio"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m3 7 9 6 9-6"/></svg><span>Email</span></a></li>
           <li><a href="https://www.instagram.com/atherbyte.studio/" target="_blank" rel="noopener noreferrer" aria-label="Atherbyte Studio on Instagram (opens in a new tab)"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>Instagram</span></a></li>
           <li><a href="https://www.facebook.com/profile.php?id=61595599060742" target="_blank" rel="noopener noreferrer" aria-label="Atherbyte Studio on Facebook (opens in a new tab)"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg><span>Facebook</span></a></li>
         </ul>

@@ -5,8 +5,10 @@
 
   email
     Your public contact address, between the quotation marks.
-    While it is empty (""), the website shows "Contact details are coming soon"
-    and no email button or link exists anywhere on the page.
+    Used for the "Email us" and "Copy email address" buttons and the "Ask about this"
+    links on the service cards. The same address is also written in index.html (the
+    no-JavaScript email link in the Contact section, the footer link and the structured
+    data), so if it ever changes, search index.html for "atherbyte.studio@" too.
 
   Social links (Instagram, Facebook) are written directly in index.html, in two
   places: the Contact section and the footer. Search that file for "instagram".
@@ -27,7 +29,7 @@
     While the list is empty, the Portfolio section and its menu link stay hidden.
 */
 window.ATHERBYTE_CONFIG = {
-  email: "",
+  email: "atherbyte.studio@gmail.com",
 
   testimonials: [
   ],

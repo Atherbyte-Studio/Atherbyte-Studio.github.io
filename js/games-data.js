@@ -16,7 +16,10 @@
     tags         Short facts shown as small badges (optional, can be []).
     image        Path to the picture, relative to the site's main folder.
     imageAlt     A short description of the picture for screen readers.
-    url          The playable game's web address.
+    url          The playable game's web address (use https://atherbyte.online/<game-folder>/).
+
+  A block with no "title" or no "description" is skipped (it can never break the rest of
+  the page), so a half-finished entry is safe to leave in the list.
 */
 window.ATHERBYTE_GAMES = [
   {
@@ -27,7 +30,7 @@ window.ATHERBYTE_GAMES = [
     tags: ["Classic", "Time Attack", "Survival", "Apple Run"],
     image: "assets/images/games/grid-snake.svg",
     imageAlt: "A glowing purple snake moving across a dark grid towards a pink dot.",
-    url: "https://atherbyte-studio.github.io/grid-snake/"
+    url: "https://atherbyte.online/grid-snake/"
   },
   {
     title: "Stop the Timer",
@@ -37,6 +40,6 @@ window.ATHERBYTE_GAMES = [
     tags: ["1, 3 or 5 second targets", "Best score", "Streaks"],
     image: "assets/images/games/stop-the-timer.svg",
     imageAlt: "A purple timer ring on a dark background showing 3.00, almost complete.",
-    url: "https://atherbyte-studio.github.io/Feel-the-time/"
+    url: "https://atherbyte.online/Feel-the-time/"
   }
 ];

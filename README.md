@@ -2,8 +2,8 @@
 
 The official website of Atherbyte Studio: a static site (plain HTML, CSS and JavaScript) hosted for free on GitHub Pages. There is no build step and no server. What you see in this repository is exactly what gets published.
 
-Live address: `https://atherbyte-studio.github.io/`
-(a custom domain can be connected later; see "When you connect a custom domain" below)
+Live address: `https://atherbyte.online/`
+(the custom domain is connected through the `CNAME` file; the old `atherbyte-studio.github.io` address redirects to it)
 
 ## What is where
 
@@ -12,6 +12,9 @@ Live address: `https://atherbyte-studio.github.io/`
 ├── index.html            The whole page: header, hero, games, about, services, contact, footer
 ├── 404.html              The "page not found" page
 ├── favicon.ico           Browser tab icon
+├── robots.txt            Tells search engines they may crawl the site and where the sitemap is
+├── sitemap.xml           List of the pages search engines should know about (add each new game's page here)
+├── CNAME                 Connects the custom domain. Leave it alone
 ├── .nojekyll             Empty file. Tells GitHub to publish the files exactly as they are
 ├── css/
 │   └── styles.css        All the styling. Colours and sizes are at the top of the file
@@ -35,23 +38,25 @@ The two games themselves live in their own repositories (`grid-snake` and `Feel-
 
 You can do all of these on github.com: open the file, click the pencil icon (Edit), change the text, then click **Commit changes**. The live site updates about a minute later.
 
-### Add your contact email
-Open `js/site-config.js` and put your address between the quotation marks:
+### Change the contact email
+The address is currently `atherbyte.studio@gmail.com`. To change it, edit it in `js/site-config.js`:
 
 ```js
 email: "you@yourdomain.com",
 ```
 
-The "Email us" button, the "Copy email address" button and the "Ask about this" links on the service cards are then added to the page automatically. While the email is empty they do not exist anywhere in the page, and the Contact section says details are coming soon.
+The "Email us" button, the "Copy email address" button and the "Ask about this" links on the service cards are built from that line. The same address is also written in `index.html` (the plain email link in the Contact section that works without JavaScript, the footer "Email" link, and the structured data near the top). Search `index.html` for `atherbyte.studio@` and change those too.
 
 ### Social links
 Instagram and Facebook are written directly in `index.html`, in two places: the Contact section and the footer (search the file for `instagram`). To change a link, edit its `href` in both places. To add another profile, copy one `<li>...</li>` line in each place and change the address, the label and the icon. Only use real, official profiles. Keep `target="_blank" rel="noopener noreferrer"` so links open in a new tab safely.
 
 ### Add a third game
 1. Add the game's picture to `assets/images/games/` (a 16:10 shape such as 640 x 400 pixels works best; JPG, PNG, WebP and SVG are all fine).
-2. In `js/games-data.js`, copy one whole `{ ... }` block, paste it after the last one (keep a comma between blocks) and change the text and the `url`.
+2. In `js/games-data.js`, copy one whole `{ ... }` block, paste it after the last one (keep a comma between blocks) and change the text and the `url` (use `https://atherbyte.online/<game-folder>/`).
+3. In `sitemap.xml`, add the game's page (copy one `<url>` block).
+4. In `index.html`, the "About the studio" text says how many games have been released; update it when you add one.
 
-There is a longer explanation at the top of that file. The new card appears on the site.
+There is a longer explanation at the top of `games-data.js`. The new card appears on the site. A block that has no `title` or `description` is skipped, so it can never break the other games.
 
 `index.html` also contains a ready-made copy of the game cards (inside `<div class="game-grid" id="game-grid">`). It is a safety net: it is what visitors see if JavaScript does not run, and the script replaces it with the cards from `games-data.js` when it does. For a complete safety net, copy one `<article class="game-card">...</article>` block there too and change its text and links.
 
@@ -79,12 +84,11 @@ GitHub remembers every version, so nothing is ever lost.
 
 If a mistake in `js/site-config.js` or `js/games-data.js` breaks something (a missing comma or quotation mark is the usual cause), restore that file the same way.
 
-## When you connect a custom domain
+## Web address (SEO)
 
-Do this only after the domain is purchased. The steps are in the Pages settings (Settings, then Pages, then Custom domain). Once the site works on the new address, update these places so link previews and search engines use it:
+The site's one official address is `https://atherbyte.online/`. These places in `index.html` must keep using it (never the old `atherbyte-studio.github.io` address): the `canonical` link, `og:url`, `og:image`, `twitter:image` and the structured data. Game links in `js/games-data.js` and `index.html` also use it. The `CNAME` file connects the domain; leave it alone.
 
-- `index.html`: the `canonical` link, `og:url`, `og:image` and `twitter:image` addresses (all currently start with `https://atherbyte-studio.github.io/`).
-- GitHub will add a file called `CNAME` to this repository. Leave it alone.
+Each game page is its own page (its own repository), so it should carry its own `canonical` pointing at its own address (for example `https://atherbyte.online/grid-snake/`), never the home page's address.
 
 ## Principles
 
