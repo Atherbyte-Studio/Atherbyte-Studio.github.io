@@ -16,7 +16,7 @@ Live address: `https://atherbyte-studio.github.io/`
 ├── css/
 │   └── styles.css        All the styling. Colours and sizes are at the top of the file
 ├── js/
-│   ├── site-config.js    YOUR DETAILS: email, social links, testimonials, client projects
+│   ├── site-config.js    YOUR DETAILS: email, testimonials, client projects
 │   ├── games-data.js     YOUR GAMES: the list the game cards are built from
 │   └── main.js           Menu, game cards, fade-in effects (you rarely need to touch this)
 └── assets/
@@ -42,30 +42,24 @@ Open `js/site-config.js` and put your address between the quotation marks:
 email: "you@yourdomain.com",
 ```
 
-The "Email us" button, the "Copy email address" button and the "Ask about this" links on the service cards then appear on their own. While the email is empty, none of them are shown and the Contact section says details are coming soon.
+The "Email us" button, the "Copy email address" button and the "Ask about this" links on the service cards are then added to the page automatically. While the email is empty they do not exist anywhere in the page, and the Contact section says details are coming soon.
 
-### Add social links
-In `js/site-config.js`, add one line per profile inside `social: [ ... ]`:
-
-```js
-{ label: "GitHub", url: "https://github.com/your-profile" },
-```
-
-They appear in the Contact section and the footer. Only add real, official profiles.
+### Social links
+Instagram and Facebook are written directly in `index.html`, in two places: the Contact section and the footer (search the file for `instagram`). To change a link, edit its `href` in both places. To add another profile, copy one `<li>...</li>` line in each place and change the address, the label and the icon. Only use real, official profiles. Keep `target="_blank" rel="noopener noreferrer"` so links open in a new tab safely.
 
 ### Add a third game
 1. Add the game's picture to `assets/images/games/` (a 16:10 shape such as 640 x 400 pixels works best; JPG, PNG, WebP and SVG are all fine).
 2. In `js/games-data.js`, copy one whole `{ ... }` block, paste it after the last one (keep a comma between blocks) and change the text and the `url`.
 
-There is a longer explanation at the top of that file. A new card appears on the site; nothing else needs to change.
+There is a longer explanation at the top of that file. The new card appears on the site.
 
-The `<noscript>` message in `index.html` (inside the Games section) lists direct links to the games for visitors with JavaScript turned off. If you add a game, add it there too if you want it included.
+`index.html` also contains a ready-made copy of the game cards (inside `<div class="game-grid" id="game-grid">`). It is a safety net: it is what visitors see if JavaScript does not run, and the script replaces it with the cards from `games-data.js` when it does. For a complete safety net, copy one `<article class="game-card">...</article>` block there too and change its text and links.
 
 ### Show real testimonials
-Add real customer feedback to `testimonials: [ ... ]` in `js/site-config.js`. The Testimonials section stays hidden until there is at least one.
+Add real customer feedback to `testimonials: [ ... ]` in `js/site-config.js`. The Testimonials section is only added to the page once there is at least one.
 
 ### Show client projects
-Add finished client work to `clientProjects: [ ... ]` in `js/site-config.js`. The Portfolio section and its menu link stay hidden until there is at least one.
+Add finished client work to `clientProjects: [ ... ]` in `js/site-config.js`. The Portfolio section and its menu link are only added to the page once there is at least one.
 
 ### Change colours
 At the top of `css/styles.css`, the `:root { ... }` block holds the colours. Change a value there and it changes everywhere.
@@ -83,7 +77,7 @@ GitHub remembers every version, so nothing is ever lost.
 4. Select all the text (Ctrl+A or Cmd+A) and copy it.
 5. Go back to the file, click the pencil icon, select everything, paste, and **Commit changes**.
 
-If a mistake in `js/site-config.js` or `js/games-data.js` breaks the page (a missing comma or quotation mark is the usual cause), restore that file the same way.
+If a mistake in `js/site-config.js` or `js/games-data.js` breaks something (a missing comma or quotation mark is the usual cause), restore that file the same way.
 
 ## When you connect a custom domain
 

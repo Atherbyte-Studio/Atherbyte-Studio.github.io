@@ -6,12 +6,10 @@
   email
     Your public contact address, between the quotation marks.
     While it is empty (""), the website shows "Contact details are coming soon"
-    and hides every email button and link.
+    and no email button or link exists anywhere on the page.
 
-  social
-    Official profiles, one per line, like:
-      { label: "Example", url: "https://example.com/your-profile" },
-    Only add real links. While the list is empty, no social links appear.
+  Social links (Instagram, Facebook) are written directly in index.html, in two
+  places: the Contact section and the footer. Search that file for "instagram".
 
   testimonials
     Only add REAL feedback from real customers, like:
@@ -30,9 +28,6 @@
 */
 window.ATHERBYTE_CONFIG = {
   email: "",
-
-  social: [
-  ],
 
   testimonials: [
   ],

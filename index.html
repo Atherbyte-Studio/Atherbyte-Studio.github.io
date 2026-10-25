@@ -62,7 +62,6 @@
           <li><a href="#games">Games</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#services">Services</a></li>
-          <li data-portfolio-link hidden><a href="#portfolio">Portfolio</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
@@ -102,13 +101,41 @@
         </div>
 
         <!-- The cards are built from js/games-data.js -->
-        <div class="game-grid" id="game-grid"></div>
+        <!-- These two cards are a safe copy that works even if JavaScript does not run.
+             When JavaScript runs, js/main.js replaces them with cards built from js/games-data.js,
+             which is the list you edit to add games. If you add a game there, add a card here too
+             (copy one <article> block) so the fallback stays complete. -->
+        <div class="game-grid" id="game-grid">
+          <article class="game-card">
+            <div class="game-media">
+              <img src="assets/images/games/grid-snake.svg" alt="A glowing purple snake moving across a dark grid towards a pink dot." width="640" height="400" loading="lazy" decoding="async">
+            </div>
+            <div class="game-body">
+              <span class="chip">Arcade</span>
+              <h3 class="game-title">Grid Snake</h3>
+              <p class="game-desc">A browser snake game. Steer, eat to grow, and avoid the walls and your own tail. Play with solid walls or wrap-around edges.</p>
+              <ul class="tag-list"><li>Classic</li><li>Time Attack</li><li>Survival</li><li>Apple Run</li></ul>
+              <div class="game-actions">
+                <a class="btn btn-primary has-arrow" href="https://atherbyte-studio.github.io/grid-snake/" target="_blank" rel="noopener">Play Now<span class="visually-hidden"> Grid Snake (opens in a new tab)</span></a>
+              </div>
+            </div>
+          </article>
 
-        <noscript>
-          <p class="section-lead">JavaScript is turned off, so the game cards can't load. You can still play directly:
-            <a href="https://atherbyte-studio.github.io/grid-snake/">Grid Snake</a> or
-            <a href="https://atherbyte-studio.github.io/Feel-the-time/">Stop the Timer</a>.</p>
-        </noscript>
+          <article class="game-card">
+            <div class="game-media">
+              <img src="assets/images/games/stop-the-timer.svg" alt="A purple timer ring on a dark background showing 3.00, almost complete." width="640" height="400" loading="lazy" decoding="async">
+            </div>
+            <div class="game-body">
+              <span class="chip">Precision</span>
+              <h3 class="game-title">Stop the Timer</h3>
+              <p class="game-desc">A timing game. Start the timer, then stop it as close to the target time as you can. Pick a 1, 3 or 5 second target and build your streak.</p>
+              <ul class="tag-list"><li>1, 3 or 5 second targets</li><li>Best score</li><li>Streaks</li></ul>
+              <div class="game-actions">
+                <a class="btn btn-primary has-arrow" href="https://atherbyte-studio.github.io/Feel-the-time/" target="_blank" rel="noopener">Play Now<span class="visually-hidden"> Stop the Timer (opens in a new tab)</span></a>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -155,7 +182,6 @@
             </div>
             <h3>Custom browser games</h3>
             <p>Playable games built for the web, from simple arcade ideas to more involved projects.</p>
-            <a class="service-inquiry link-arrow" data-service="Custom browser game" href="#contact" hidden>Ask about this</a>
           </article>
 
           <article class="service-card reveal">
@@ -164,7 +190,6 @@
             </div>
             <h3>Website design and development</h3>
             <p>Clean, responsive websites that work on phones, tablets and desktops.</p>
-            <a class="service-inquiry link-arrow" data-service="Website design and development" href="#contact" hidden>Ask about this</a>
           </article>
 
           <article class="service-card reveal">
@@ -173,7 +198,6 @@
             </div>
             <h3>Interactive web experiences</h3>
             <p>Interactive pages, tools and visual experiences that go beyond a static site.</p>
-            <a class="service-inquiry link-arrow" data-service="Interactive web experience" href="#contact" hidden>Ask about this</a>
           </article>
 
           <article class="service-card reveal">
@@ -182,33 +206,14 @@
             </div>
             <h3>Small custom digital projects</h3>
             <p>Have a smaller idea? Tell us what you need and we'll say honestly whether it's a fit.</p>
-            <a class="service-inquiry link-arrow" data-service="Small custom project" href="#contact" hidden>Ask about this</a>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ===================== PORTFOLIO (hidden until js/site-config.js has clientProjects) ===================== -->
-    <section class="section section-alt" id="portfolio" aria-labelledby="portfolio-title" hidden>
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Portfolio</p>
-          <h2 class="section-title" id="portfolio-title">Client projects.</h2>
-        </div>
-        <div class="game-grid" id="portfolio-grid"></div>
-      </div>
-    </section>
-
-    <!-- ===================== TESTIMONIALS (hidden until js/site-config.js has testimonials) ===================== -->
-    <section class="section" id="testimonials" aria-labelledby="testimonials-title" hidden>
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Kind words</p>
-          <h2 class="section-title" id="testimonials-title">What clients say.</h2>
-        </div>
-        <div class="testimonial-grid" id="testimonial-list"></div>
-      </div>
-    </section>
+    <!-- PORTFOLIO and TESTIMONIALS sections are not written here on purpose.
+         js/main.js adds them to the page (just before Contact) only when
+         js/site-config.js contains real client projects or testimonials. -->
 
     <!-- ===================== CONTACT ===================== -->
     <section class="section" id="contact" aria-labelledby="contact-title">
@@ -218,28 +223,23 @@
           <h2 class="section-title" id="contact-title">Have a project in mind?</h2>
           <p class="section-lead">Whether it's a browser game, a website or something in between, we'd like to hear about it.</p>
 
-          <!-- Shown until a real email address is added in js/site-config.js -->
+          <!-- No email address is published yet, so there are no email buttons or links here.
+               When a real address is added in js/site-config.js, js/main.js replaces this note
+               with the contact buttons. -->
           <div class="contact-state" id="contact-pending">
-            <p class="contact-note"><strong>Contact details are coming soon.</strong> We're getting our inquiry channels ready. Until then, you're welcome to try our games.</p>
+            <p class="contact-note"><strong>Contact details are coming soon.</strong> We're getting our inquiry channels ready. Until then, you're welcome to try our games or follow us below.</p>
             <div class="contact-actions">
               <a class="btn btn-secondary" href="#games">Play our games</a>
             </div>
           </div>
+          <div id="contact-email-slot"></div>
 
-          <!-- Revealed automatically once an email address is set in js/site-config.js -->
-          <div class="contact-state" id="contact-ready" hidden>
-            <div class="contact-actions">
-              <a class="btn btn-primary" id="contact-email-link" href="#contact">Email us</a>
-              <button class="btn btn-secondary" type="button" id="copy-email">Copy email address</button>
-            </div>
-            <p class="contact-note">Or write to <span class="contact-email" id="contact-email-text"></span></p>
-            <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
-          </div>
-
-          <!-- Revealed automatically once social links are added in js/site-config.js -->
-          <div class="contact-social" id="contact-social" hidden>
+          <div class="contact-social">
             <p class="social-label">Find us online</p>
-            <ul class="social-list" id="contact-social-list"></ul>
+            <ul class="social-list">
+              <li><a href="https://www.instagram.com/atherbyte.studio/" target="_blank" rel="noopener noreferrer" aria-label="Atherbyte Studio on Instagram (opens in a new tab)"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>Instagram</span></a></li>
+              <li><a href="https://www.facebook.com/profile.php?id=61595599060742" target="_blank" rel="noopener noreferrer" aria-label="Atherbyte Studio on Facebook (opens in a new tab)"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg><span>Facebook</span></a></li>
+            </ul>
           </div>
         </div>
       </div>
@@ -265,14 +265,16 @@
           <li><a href="#games">Games</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#services">Services</a></li>
-          <li data-portfolio-link hidden><a href="#portfolio">Portfolio</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
 
-      <div id="footer-social" hidden>
+      <div>
         <p class="footer-heading">Online</p>
-        <ul class="social-list" id="footer-social-list"></ul>
+        <ul class="social-list">
+          <li><a href="https://www.instagram.com/atherbyte.studio/" target="_blank" rel="noopener noreferrer" aria-label="Atherbyte Studio on Instagram (opens in a new tab)"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>Instagram</span></a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61595599060742" target="_blank" rel="noopener noreferrer" aria-label="Atherbyte Studio on Facebook (opens in a new tab)"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg><span>Facebook</span></a></li>
+        </ul>
       </div>
     </div>
 

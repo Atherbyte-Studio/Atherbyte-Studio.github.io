@@ -3,8 +3,8 @@
   No libraries. Each job is its own function; the list at the bottom runs them.
 
     1. buildGameCards   Builds the cards from js/games-data.js
-    2. applyConfig      Shows email / social links / testimonials / portfolio
-                        only when js/site-config.js contains real details
+    2. applyConfig      Adds the email buttons / testimonials / portfolio to the
+                        page only when js/site-config.js contains real details
     3. initMenu         The mobile menu button
     4. initActiveLink   Highlights the menu link of the section you are viewing
     5. initYear         Keeps the footer year current
@@ -78,82 +78,98 @@
   function buildGameCards() {
     var grid = $("#game-grid");
     if (!grid) { return; }
-    if (!GAMES.length) {
-      grid.appendChild(make("p", "section-lead", "New games are on the way."));
-      return;
-    }
+    if (!GAMES.length) { return; }   // keep the ready-made cards from index.html
+    while (grid.firstChild) { grid.removeChild(grid.firstChild); }
     GAMES.forEach(function (game) { grid.appendChild(buildCard(game, "Play Now")); });
   }
 
   /* ---------- 2. Settings from js/site-config.js ---------- */
-  function renderSocialLinks(listSelector, wrapperSelector) {
-    var list = $(listSelector);
-    var wrapper = $(wrapperSelector);
-    var links = (CONFIG.social || []).filter(function (s) { return s && s.label && isWebUrl(s.url); });
-    if (!list || !wrapper || !links.length) { return; }
-    links.forEach(function (s) {
-      var li = make("li");
-      var a = make("a", null, s.label);
-      a.href = s.url;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      li.appendChild(a);
-      list.appendChild(li);
-    });
-    wrapper.hidden = false;
-  }
 
+  // The email buttons do not exist in the page until a real address is set.
+  // They are created here, so nothing about email can show up before then.
   function applyEmail() {
     var email = String(CONFIG.email || "").trim();
-    var looksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!looksValid) { return; }   // No real address yet: every email action stays hidden.
+    var slot = $("#contact-email-slot");
+    if (!slot || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { return; }
 
+    var actions = make("div", "contact-actions");
+
+    var mail = make("a", "btn btn-primary", "Email us");
+    mail.id = "contact-email-link";
+    mail.href = "mailto:" + email + "?subject=" + encodeURIComponent("Project inquiry for Atherbyte Studio");
+    actions.appendChild(mail);
+
+    var copy = make("button", "btn btn-secondary", "Copy email address");
+    copy.type = "button";
+    copy.id = "copy-email";
+    actions.appendChild(copy);
+
+    var note = make("p", "contact-note", "Or write to ");
+    note.appendChild(make("span", "contact-email", email));
+
+    var status = make("p", "copy-status");
+    status.id = "copy-status";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
+
+    slot.className = "contact-state";
+    slot.appendChild(actions);
+    slot.appendChild(note);
+    slot.appendChild(status);
+
+    // Replace the "coming soon" note
     var pending = $("#contact-pending");
-    var ready = $("#contact-ready");
-    if (pending) { pending.hidden = true; }
-    if (ready) { ready.hidden = false; }
+    if (pending && pending.parentNode) { pending.parentNode.removeChild(pending); }
 
-    var mainLink = $("#contact-email-link");
-    if (mainLink) {
-      mainLink.href = "mailto:" + email + "?subject=" + encodeURIComponent("Project inquiry for Atherbyte Studio");
-    }
-    var text = $("#contact-email-text");
-    if (text) { text.textContent = email; }
-
-    // "Ask about this" links on the service cards
-    $all(".service-inquiry").forEach(function (link) {
-      var service = link.getAttribute("data-service") || "a project";
+    // "Ask about this" link on every service card
+    $all(".service-card").forEach(function (card) {
+      var heading = $("h3", card);
+      var service = heading ? heading.textContent : "a project";
+      var link = make("a", "service-inquiry link-arrow", "Ask about this");
       link.href = "mailto:" + email + "?subject=" + encodeURIComponent("Inquiry: " + service);
-      link.hidden = false;
+      card.appendChild(link);
     });
 
-    // "Copy email address" button
-    var copyButton = $("#copy-email");
-    var status = $("#copy-status");
-    if (copyButton) {
-      copyButton.addEventListener("click", function () {
-        function say(message) {
-          if (!status) { return; }
-          status.textContent = message;
-          window.setTimeout(function () { status.textContent = ""; }, 4000);
-        }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(email).then(
-            function () { say("Email address copied."); },
-            function () { say("Couldn't copy automatically. Please select the address and copy it."); }
-          );
-        } else {
-          say("Couldn't copy automatically. Please select the address and copy it.");
-        }
-      });
+    function say(message) {
+      status.textContent = message;
+      window.setTimeout(function () { status.textContent = ""; }, 4000);
     }
+    copy.addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(
+          function () { say("Email address copied."); },
+          function () { say("Couldn't copy automatically. Please select the address and copy it."); }
+        );
+      } else {
+        say("Couldn't copy automatically. Please select the address and copy it.");
+      }
+    });
+  }
+
+  // Builds a whole section (heading + content) and puts it just before the Contact section.
+  function addSection(id, extraClass, eyebrow, title, content) {
+    var contact = document.getElementById("contact");
+    if (!contact) { return null; }
+    var section = make("section", "section" + (extraClass ? " " + extraClass : ""));
+    section.id = id;
+    section.setAttribute("aria-labelledby", id + "-title");
+    var container = make("div", "container");
+    var head = make("div", "section-head");
+    head.appendChild(make("p", "eyebrow", eyebrow));
+    var heading = make("h2", "section-title", title);
+    heading.id = id + "-title";
+    head.appendChild(heading);
+    container.appendChild(head);
+    container.appendChild(content);
+    section.appendChild(container);
+    contact.parentNode.insertBefore(section, contact);
+    return section;
   }
 
   function applyTestimonials() {
     var items = (CONFIG.testimonials || []).filter(function (t) { return t && t.quote && t.name; });
-    var section = $("#testimonials");
-    var list = $("#testimonial-list");
-    if (!section || !list || !items.length) { return; }
+    if (!items.length) { return; }
+    var list = make("div", "testimonial-grid");
     items.forEach(function (t) {
       var figure = make("figure", "testimonial reveal");
       figure.appendChild(make("blockquote", null, "“" + t.quote + "”"));
@@ -163,23 +179,28 @@
       figure.appendChild(caption);
       list.appendChild(figure);
     });
-    section.hidden = false;
+    addSection("testimonials", "", "Kind words", "What clients say.", list);
   }
 
   function applyPortfolio() {
     var projects = (CONFIG.clientProjects || []).filter(function (p) { return p && p.title && p.description; });
-    var section = $("#portfolio");
-    var grid = $("#portfolio-grid");
-    if (!section || !grid || !projects.length) { return; }
+    if (!projects.length) { return; }
+    var grid = make("div", "game-grid");
     projects.forEach(function (p) { grid.appendChild(buildCard(p, "View project")); });
-    section.hidden = false;
-    $all("[data-portfolio-link]").forEach(function (item) { item.hidden = false; });
+    addSection("portfolio", "section-alt", "Portfolio", "Client projects.", grid);
+
+    // Add "Portfolio" to the header menu and the footer links, just before "Contact".
+    $all(".nav-list, .footer-links").forEach(function (list) {
+      var item = make("li");
+      var link = make("a", null, "Portfolio");
+      link.href = "#portfolio";
+      item.appendChild(link);
+      list.insertBefore(item, list.lastElementChild);
+    });
   }
 
   function applyConfig() {
     applyEmail();
-    renderSocialLinks("#contact-social-list", "#contact-social");
-    renderSocialLinks("#footer-social-list", "#footer-social");
     applyTestimonials();
     applyPortfolio();
   }

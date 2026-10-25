@@ -619,6 +619,7 @@ a:hover { color: #fff; }
 .social-list a {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   min-height: 44px;
   padding: 0 16px;
   color: var(--text);
