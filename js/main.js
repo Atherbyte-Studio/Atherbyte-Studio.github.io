@@ -32,7 +32,7 @@
   function isWebUrl(url) { return typeof url === "string" && /^https?:\/\//i.test(url); }
 
   /* ---------- 1. Game (and portfolio) cards ---------- */
-  function buildCard(item, buttonLabel) {
+  function buildCard(item, buttonLabel, headingTag) {
     var card = make("article", "game-card reveal");
 
     if (item.image) {
@@ -54,7 +54,7 @@
 
     var body = make("div", "game-body");
     if (item.category) { body.appendChild(make("span", "chip", item.category)); }
-    body.appendChild(make("h3", "game-title", item.title));
+    body.appendChild(make(headingTag || "h3", "game-title", item.title));
     body.appendChild(make("p", "game-desc", item.description));
 
     if (item.tags && item.tags.length) {
@@ -96,9 +96,14 @@
     });
     if (!valid.length) { return; }   // keep the ready-made cards from index.html
 
+    // Use the same heading level as the ready-made cards (h3 under the home page's "Games"
+    // heading, h2 on /games/ where the page title is the h1), so the outline never skips a level.
+    var sample = $(".game-title", grid);
+    var headingTag = sample ? sample.tagName.toLowerCase() : "h3";
+
     var cards = [];
     valid.forEach(function (game) {
-      try { cards.push(buildCard(game, "Play Now")); } catch (e) { /* skip this one game */ }
+      try { cards.push(buildCard(game, "Play Now", headingTag)); } catch (e) { /* skip this one game */ }
     });
     if (!cards.length) { return; }
 
@@ -239,6 +244,7 @@
     function isOpen() { return toggle.getAttribute("aria-expanded") === "true"; }
     function setOpen(open) {
       toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
       nav.classList.toggle("is-open", open);
     }
 

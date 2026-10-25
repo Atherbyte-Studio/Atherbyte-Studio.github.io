@@ -754,14 +754,21 @@ a:hover { color: #fff; }
   display: flex;
   flex-wrap: wrap;
   gap: 4px 8px;
-  margin: 0 0 28px;
+  align-items: center;
+  margin: 0 0 12px;
   padding: 0;
   list-style: none;
   color: var(--muted);
   font-size: 0.9rem;
 }
 .breadcrumb li + li::before { content: "/"; margin-right: 8px; opacity: 0.5; }
-.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;                    /* comfortable tap target */
+  color: var(--muted);
+  text-decoration: none;
+}
 .breadcrumb a:hover { color: var(--text); text-decoration: underline; }
 .breadcrumb [aria-current] { color: var(--text); }
 
