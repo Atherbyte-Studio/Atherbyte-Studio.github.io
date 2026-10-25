@@ -67,10 +67,8 @@
       var actions = make("div", "game-actions");
       var link = make("a", "btn btn-primary has-arrow");
       link.href = item.url;
-      link.target = "_blank";
-      link.rel = "noopener";
       link.appendChild(document.createTextNode(buttonLabel));
-      link.appendChild(make("span", "visually-hidden", " " + item.title + " (opens in a new tab)"));
+      link.appendChild(make("span", "visually-hidden", " " + item.title));
       actions.appendChild(link);
       // Optional "Details" button to the game's page on this site (only for addresses that start with "/").
       if (typeof item.page === "string" && /^\/(?!\/)/.test(item.page)) {

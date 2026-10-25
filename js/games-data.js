@@ -14,7 +14,7 @@
     category     A short label shown above the title, e.g. "Arcade".
     description  One or two sentences.
     tags         Short facts shown as small badges (optional, can be []).
-    image        Path to the picture, relative to the site's main folder.
+    image        Path to the picture, starting with "/" (for example "/assets/images/games/name.webp").
     imageAlt     A short description of the picture for screen readers.
     page         The game's own page on this site, e.g. "/games/grid-snake/" (optional; adds a
                  "Details" button next to Play Now).
@@ -30,7 +30,7 @@ window.ATHERBYTE_GAMES = [
     description:
       "A browser snake game. Steer, eat to grow, and avoid the walls and your own tail. Play with solid walls or wrap-around edges.",
     tags: ["Classic", "Time Attack", "Survival", "Apple Run"],
-    image: "assets/images/games/grid-snake.webp",
+    image: "/assets/images/games/grid-snake.webp",
     imageAlt: "Grid Snake's start screen showing four game modes: Classic, Time Attack, Survival and Apple Run.",
     page: "/games/grid-snake/",
     url: "https://atherbyte.online/grid-snake/"
@@ -41,7 +41,7 @@ window.ATHERBYTE_GAMES = [
     description:
       "A timing game. Start the timer, then stop it as close to the target time as you can. Pick a 1, 3 or 5 second target and build your streak.",
     tags: ["1, 3 or 5 second targets", "Best score", "Streaks"],
-    image: "assets/images/games/stop-the-timer.webp",
+    image: "/assets/images/games/stop-the-timer.webp",
     imageAlt: "Stop the Timer's start screen: a cartoon rabbit beside buttons for 1, 3 and 5 second targets and a Start button.",
     page: "/games/stop-the-timer/",
     url: "https://atherbyte.online/Feel-the-time/"

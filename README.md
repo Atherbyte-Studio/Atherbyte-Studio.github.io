@@ -16,7 +16,7 @@ Live address: `https://atherbyte.online/`
 ├── sitemap.xml           List of the pages search engines should know about (add each new game's page here)
 ├── CNAME                 Connects the custom domain. Leave it alone
 ├── .nojekyll             Empty file. Tells GitHub to publish the files exactly as they are
-├── games/                One info page per game (games/grid-snake/, games/stop-the-timer/)
+├── games/                /games/ (all games) and one info page per game (games/grid-snake/, ...)
 ├── css/
 │   └── styles.css        All the styling. Colours and sizes are at the top of the file
 ├── js/
