@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account | Atherbyte Studio</title>
+  <meta name="description" content="Sign in or create your Atherbyte account. One account for every Atherbyte game.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0B0F">
+  <meta name="color-scheme" content="dark">
+  <link rel="canonical" href="https://atherbyte.online/account/">
+
+  <!-- This page handles passwords, so it is locked down: only its own scripts, the Cloudflare security check
+       (Turnstile) and the Atherbyte API address are allowed. If the API moves to another address, add it to connect-src. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.workers.dev https://api.atherbyte.online https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; base-uri 'none'; form-action 'self'">
+
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/assets/images/favicon.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+
+  <script>document.documentElement.classList.add("js");</script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/account.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="Atherbyte Studio, go to the home page">
+        <img src="/assets/images/atherbyte-mark.webp" alt="" width="40" height="40">
+        <span class="brand-name">Atherbyte <span>Studio</span></span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main">
+        <ul class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/games/">Games</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="/account/" aria-current="true">Account</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section account-section" aria-labelledby="account-title">
+      <div class="container account-wrap">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li aria-current="page">Account</li>
+          </ol>
+        </nav>
+
+        <p class="eyebrow">Atherbyte account</p>
+        <h1 class="section-title" id="account-title">One account for every Atherbyte game.</h1>
+        <p class="section-lead">Create a free account with a username and a password. It works across our games, so your name and progress follow you.</p>
+
+        <noscript><p class="notice notice-warn">This page needs JavaScript to sign in or create an account.</p></noscript>
+
+        <!-- Messages: service problems, "signed out", "account created". -->
+        <div id="acc-notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+        <!-- 1. Checking the saved session -->
+        <div id="view-loading" class="card" hidden>
+          <p class="card-text" id="loading-text">Loading your account&hellip;</p>
+        </div>
+
+        <!-- 2. Not signed in -->
+        <div id="view-guest" class="card" hidden>
+          <div class="tabs" role="tablist" aria-label="Account">
+            <button class="tab" id="tab-login" type="button" role="tab" aria-selected="true" aria-controls="panel-login">Sign in</button>
+            <button class="tab" id="tab-register" type="button" role="tab" aria-selected="false" aria-controls="panel-register" tabindex="-1">Create account</button>
+          </div>
+
+          <form id="panel-login" class="form" role="tabpanel" aria-labelledby="tab-login" novalidate>
+            <div class="field">
+              <label for="login-username">Username</label>
+              <input id="login-username" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" required>
+            </div>
+            <div class="field">
+              <label for="login-password">Password</label>
+              <div class="pw-wrap">
+                <input id="login-password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+                <button class="pw-toggle" type="button" data-toggle-for="login-password" aria-pressed="false">Show</button>
+              </div>
+            </div>
+            <div class="captcha" data-captcha-for="login"></div>
+            <p class="form-error" role="alert" hidden></p>
+            <button class="btn btn-primary" type="submit"><span class="btn-label">Sign in</span></button>
+            <p class="form-hint">Forgot your password? Accounts with a verified recovery email will be able to reset it here soon. Without one, it cannot be recovered.</p>
+          </form>
+
+          <form id="panel-register" class="form" role="tabpanel" aria-labelledby="tab-register" hidden novalidate>
+            <div class="field">
+              <label for="reg-username">Choose a username</label>
+              <input id="reg-username" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" required aria-describedby="reg-username-hint">
+              <p class="field-hint" id="reg-username-hint">3 to 20 letters, numbers or underscores. Not case sensitive: <em>Ali</em> and <em>ali</em> are the same name, shown in lower case. You can&rsquo;t change it later.</p>
+            </div>
+            <div class="field">
+              <label for="reg-password">Choose a password</label>
+              <div class="pw-wrap">
+                <input id="reg-password" name="password" type="password" autocomplete="new-password" maxlength="72" required aria-describedby="reg-password-hint">
+                <button class="pw-toggle" type="button" data-toggle-for="reg-password" aria-pressed="false">Show</button>
+              </div>
+              <p class="field-hint" id="reg-password-hint">8 to 72 characters. Use something you don&rsquo;t use anywhere else.</p>
+            </div>
+
+            <div class="notice notice-warn" role="note">
+              <strong>Please read this.</strong> You don&rsquo;t need an email to play. But until you add and verify a real email, <strong>we cannot recover your account if you forget your password.</strong> Write your password down somewhere safe.
+            </div>
+            <label class="check">
+              <input id="reg-ack" type="checkbox" required>
+              <span>I understand that without a verified recovery email, my account cannot be recovered if I lose my password.</span>
+            </label>
+
+            <div class="captcha" data-captcha-for="register"></div>
+            <p class="form-error" role="alert" hidden></p>
+            <button class="btn btn-primary" type="submit"><span class="btn-label">Create account</span></button>
+          </form>
+        </div>
+
+        <!-- 3. Signed in -->
+        <div id="view-user" hidden>
+          <div class="card">
+            <p class="card-eyebrow">Signed in as</p>
+            <h2 class="card-title" id="user-name"></h2>
+            <p id="user-recovery-badge" class="badge"></p>
+            <div class="card-actions">
+              <a class="btn btn-primary has-arrow" id="continue-link" href="/games/" >Play games</a>
+              <button class="btn btn-secondary" id="signout" type="button"><span class="btn-label">Sign out</span></button>
+            </div>
+          </div>
+
+          <div class="card" id="section-email">
+            <h2 class="card-title card-title-sm">Recovery email</h2>
+            <div id="email-unverified">
+              <div class="notice notice-warn" role="note">
+                <strong>No verified recovery email.</strong> If you forget your password, we cannot recover this account. A verified email lets you reset your password, and unlocks profile pictures.
+              </div>
+              <form id="email-form" class="form" novalidate>
+                <div class="field">
+                  <label for="email-input">Your real email</label>
+                  <input id="email-input" name="email" type="email" autocomplete="email" disabled>
+                </div>
+                <button class="btn btn-secondary" type="submit" disabled><span class="btn-label">Send verification link</span></button>
+                <p class="form-hint" id="email-soon">Adding a recovery email isn&rsquo;t open yet. This form switches on when that part of the service goes live.</p>
+              </form>
+            </div>
+            <p id="email-verified" class="card-text" hidden>Your recovery email is verified. You can reset your password if you forget it.</p>
+          </div>
+
+          <div class="card" id="section-avatar">
+            <h2 class="card-title card-title-sm">Profile picture</h2>
+            <p id="avatar-locked" class="card-text">Profile pictures unlock after you verify a recovery email.</p>
+            <p id="avatar-soon" class="card-text" hidden>Your email is verified. Picture uploads aren&rsquo;t open yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/" aria-label="Atherbyte Studio, go to the home page">
+          <img src="/assets/images/atherbyte-mark.webp" alt="" width="40" height="40" loading="lazy">
+          <span class="brand-name">Atherbyte <span>Studio</span></span>
+        </a>
+        <p>An independent studio for browser games and interactive web experiences.</p>
+      </div>
+
+      <nav aria-label="Footer">
+        <p class="footer-heading">Explore</p>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/games/">Games</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span data-year>2026</span> Atherbyte Studio. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Order matters: settings, then the account client, then the site menu script, then this page. -->
+  <script src="/js/site-config.js"></script>
+  <script src="/js/atherbyte-account.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/account-page.js"></script>
+</body>
+</html>

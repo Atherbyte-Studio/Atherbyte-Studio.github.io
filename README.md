@@ -73,6 +73,44 @@ Add finished client work to `clientProjects: [ ... ]` in `js/site-config.js`. Th
 ### Change colours
 At the top of `css/styles.css`, the `:root { ... }` block holds the colours. Change a value there and it changes everywhere.
 
+## Accounts (`/account/`)
+
+One account for the whole studio: username and password, sign-in shared by the site and the games (they all live on
+`atherbyte.online`, so they share the browser's `localStorage`). The page talks to the **Atherbyte API** (a Cloudflare
+Worker, repository `atherbyte-api`). Nothing secret is in this repository.
+
+| File | What it is |
+| --- | --- |
+| `account/index.html` | The page: sign in, create account, profile. It has its own strict Content-Security-Policy. |
+| `js/atherbyte-account.js` | The shared client (sign in, sessions, refresh, sign out, `requireAccount()`). Games can load it too. |
+| `js/account-page.js` | The behaviour of `/account/`. |
+| `css/account.css` | Its styles (uses the same colours as `styles.css`). |
+| `tests/atherbyte-account.test.js` | Unit tests: `node --test "tests/*.test.js"`. They are not part of any page. |
+
+### Turning it on (nothing is active until you do this)
+1. Deploy the Worker (see the `atherbyte-api` README) and copy its address.
+2. In `js/site-config.js`, set `account.apiBaseUrl` to that address (https). While it is `""`, `/account/` says accounts are
+   not available, the menu has no "Sign in" link, and **no game is affected**.
+3. Create a free Cloudflare Turnstile widget. Put its **site key** in `account.turnstileSiteKey` (the secret key goes only
+   into the Worker). If the Worker runs without the security check, leave it `""`.
+4. If the API is not on `*.workers.dev` or `api.atherbyte.online`, add its address to `connect-src` in the
+   `<meta http-equiv="Content-Security-Policy">` of `account/index.html`.
+5. To ask visitors to sign in before a game, set `requiresAccount: true` for that game in `js/games-data.js`.
+   Its card then reads "Sign in to play" and brings the visitor back to the game after signing in.
+
+### What works and what does not yet
+- **Works once the Worker is deployed:** create account, sign in, "who am I", automatic session refresh, sign out
+  (which also revokes the session on the server), the recovery warning, the `Sign in` menu link, the `next=` return trip.
+- **Shown but switched off** (`account.features` in `site-config.js`): adding a recovery email and profile pictures. The
+  Worker has no endpoints for them yet, so the page shows the forms disabled with a plain explanation instead of
+  pretending. Pictures are only ever offered after the email is verified.
+- **"Sign in first" is a convenience, not a lock.** A game page is a public file; anyone can open it directly or run a copy.
+  Real protection is on the server (requests without a valid token are refused) and, for the leaderboard, in the score
+  checks that are still to be built. Score submission to the leaderboard is **not** enabled by any of this.
+- The session (access and refresh token) is kept in `localStorage`, so a script injected into any page on the domain
+  could read it. That is why the account page has a strict policy and the site loads no third-party scripts, apart from
+  Cloudflare's security check on `/account/` only.
+
 ## Testing a change
 
 After you commit, wait a minute, open the live site and refresh (Ctrl+F5 on Windows, Cmd+Shift+R on Mac). Check on a phone as well as a computer.

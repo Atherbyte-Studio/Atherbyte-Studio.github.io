@@ -19,6 +19,10 @@
     page         The game's own page on this site, e.g. "/games/grid-snake/" (optional; adds a
                  "Details" button next to Play Now).
     url          The playable game's web address (use https://atherbyte.online/<game-folder>/).
+    requiresAccount  true = visitors who are not signed in see "Sign in to play" on the card, which takes them to
+                     /account/ and brings them back to the game afterwards. Optional, default false. It only takes
+                     effect once the account service address is set in js/site-config.js. This is a convenience on
+                     this website: a game page is still a public file, so it is not a lock.
 
   A block with no "title" or no "description" is skipped (it can never break the rest of
   the page), so a half-finished entry is safe to leave in the list.
@@ -33,7 +37,8 @@ window.ATHERBYTE_GAMES = [
     image: "/assets/images/games/grid-snake.webp",
     imageAlt: "Grid Snake's start screen showing four game modes: Classic, Time Attack, Survival and Apple Run.",
     page: "/games/grid-snake/",
-    url: "https://atherbyte.online/grid-snake/"
+    url: "https://atherbyte.online/grid-snake/",
+    requiresAccount: false
   },
   {
     title: "Stop the Timer",
@@ -44,6 +49,7 @@ window.ATHERBYTE_GAMES = [
     image: "/assets/images/games/stop-the-timer.webp",
     imageAlt: "Stop the Timer's start screen: a cartoon rabbit beside buttons for 1, 3 and 5 second targets and a Start button.",
     page: "/games/stop-the-timer/",
-    url: "https://atherbyte.online/Feel-the-time/"
+    url: "https://atherbyte.online/Feel-the-time/",
+    requiresAccount: false
   }
 ];
