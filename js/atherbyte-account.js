@@ -41,6 +41,7 @@
     username_reserved: "That name is reserved. Please choose another.",
     invalid_password: "Use a password of 8 to 72 characters that is different from your username.",
     username_taken: "That username is already taken. Please choose another.",
+    weak_password: "That password is too easy to guess. Please choose a longer, less common one.",
     invalid_credentials: "Wrong username or password.",
     rate_limited: "Too many attempts. Please wait a minute and try again.",
     rate_limit_unavailable: "The account service is not ready yet. Please try again later.",
