@@ -1,0 +1,122 @@
+/* =====================================================================
+   account.css: styles for /account/ only. Uses the design tokens from styles.css (loaded first).
+   ===================================================================== */
+
+.account-wrap { max-width: 760px; }
+.account-wrap .section-lead { margin-bottom: 28px; }
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(20px, 4vw, 32px);
+  margin-top: 20px;
+}
+.card-eyebrow { margin: 0 0 4px; color: var(--muted); font: 600 0.78rem/1.2 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.card-title { margin: 0 0 12px; font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.card-title-sm { font-size: 1.15rem; letter-spacing: -0.01em; }
+.card-text { margin: 0; color: var(--muted); }
+.card-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+
+/* ---------- tabs ---------- */
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 5px;
+  margin-bottom: 24px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.tab {
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font: 650 0.98rem/1 var(--font);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.tab:hover { color: var(--text); }
+.tab[aria-selected="true"] { background: var(--surface-2); color: #fff; box-shadow: inset 0 0 0 1px rgba(136, 92, 255, 0.5); }
+
+/* ---------- forms ---------- */
+.form { display: grid; gap: 18px; }
+.field { display: grid; gap: 8px; }
+.field label, .form > label:not(.check) { font-weight: 600; font-size: 0.95rem; }
+.field input[type="text"], .field input[type="password"], .field input[type="email"] {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: 400 1rem/1.2 var(--font);
+}
+.field input::placeholder { color: var(--muted); }
+.field input:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 2px; border-color: var(--accent); }
+.field input:disabled { opacity: 0.55; cursor: not-allowed; }
+.field-hint, .form-hint { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+.pw-wrap { position: relative; display: block; }
+.pw-wrap input { padding-right: 76px; }
+.pw-toggle {
+  position: absolute;
+  top: 5px; right: 5px;
+  min-width: 60px; height: 40px;
+  border: 0;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--accent-soft);
+  font: 600 0.85rem/1 var(--font);
+  cursor: pointer;
+}
+.pw-toggle:hover { color: #fff; background: rgba(136, 92, 255, 0.18); }
+
+.check { display: flex; gap: 12px; align-items: flex-start; font-size: 0.95rem; line-height: 1.5; cursor: pointer; }
+.check input { flex: none; width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--accent); }
+
+.captcha:empty { display: none; }
+.captcha { min-height: 65px; }
+
+.form-error {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 107, 122, 0.45);
+  background: rgba(255, 107, 122, 0.1);
+  color: #FFB3BB;
+  font-size: 0.95rem;
+}
+
+.form .btn { width: 100%; }
+.btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn[disabled]:hover { transform: none; }
+.btn[aria-busy="true"] { cursor: progress; }
+@media (min-width: 560px) { .form .btn { width: auto; justify-self: start; min-width: 220px; } }
+
+/* ---------- notices and badges ---------- */
+.notice {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  background: var(--surface);
+  font-size: 0.97rem;
+  line-height: 1.55;
+}
+.notice-info { border-left-color: var(--accent); }
+.notice-success { border-color: rgba(74, 222, 128, 0.4); border-left-color: #4ADE80; background: rgba(74, 222, 128, 0.08); }
+.notice-warn { border-color: rgba(245, 184, 75, 0.4); border-left-color: #F5B84B; background: rgba(245, 184, 75, 0.08); }
+.card .notice { margin-top: 0; }
+
+.badge { display: inline-block; margin: 0; padding: 6px 12px; border-radius: 999px; font: 600 0.82rem/1.2 var(--font); }
+.badge-warn { background: rgba(245, 184, 75, 0.14); color: #F5B84B; border: 1px solid rgba(245, 184, 75, 0.4); }
+.badge-ok { background: rgba(74, 222, 128, 0.12); color: #4ADE80; border: 1px solid rgba(74, 222, 128, 0.4); }
+
+#section-email .form { margin-top: 18px; }

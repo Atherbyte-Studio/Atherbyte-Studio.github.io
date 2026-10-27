@@ -31,6 +31,18 @@
   // Only allow normal web links, never things like "javascript:...".
   function isWebUrl(url) { return typeof url === "string" && /^https?:\/\//i.test(url); }
 
+  /* ---------- account (js/atherbyte-account.js; every use below copes with it being absent) ---------- */
+  function accountClient() {
+    try { return window.AtherbyteAccount && window.AtherbyteAccount.get ? window.AtherbyteAccount.get() : null; }
+    catch (e) { return null; }
+  }
+  // A game card says "Sign in to play" only when the game asks for an account, the account service address is set,
+  // and nobody is signed in. Otherwise the card is exactly the same as before.
+  function needsSignIn(item) {
+    var account = accountClient();
+    return !!(item && item.requiresAccount === true && account && account.isConfigured() && !account.hasSession());
+  }
+
   /* ---------- 1. Game (and portfolio) cards ---------- */
   function buildCard(item, buttonLabel, headingTag) {
     var card = make("article", "game-card reveal");
@@ -66,8 +78,9 @@
     if (isWebUrl(item.url)) {
       var actions = make("div", "game-actions");
       var link = make("a", "btn btn-primary has-arrow");
-      link.href = item.url;
-      link.appendChild(document.createTextNode(buttonLabel));
+      var gated = needsSignIn(item);
+      link.href = gated ? "/account/?next=" + encodeURIComponent(item.url) : item.url;
+      link.appendChild(document.createTextNode(gated ? "Sign in to play" : buttonLabel));
       link.appendChild(make("span", "visually-hidden", " " + item.title));
       actions.appendChild(link);
       // Optional "Details" button to the game's page on this site (only for addresses that start with "/").
@@ -233,6 +246,20 @@
     applyPortfolio();
   }
 
+  // Adds "Sign in" (or the signed-in username) to the header menu. Skipped on /account/, where the link is already there,
+  // and while accounts are not set up on this site.
+  function initAccountLink() {
+    var account = accountClient();
+    if (!account || !account.isConfigured()) { return; }
+    var list = $(".site-nav .nav-list");
+    if (!list || $("a[href='/account/']", list)) { return; }
+    var item = make("li");
+    var link = make("a", null, account.hasSession() ? account.username() : "Sign in");
+    link.href = "/account/";
+    item.appendChild(link);
+    list.appendChild(item);
+  }
+
   /* ---------- 3. Mobile menu ---------- */
   function initMenu() {
     var toggle = $(".nav-toggle");
@@ -343,6 +370,7 @@
 
   run(buildGameCards);   // first, so the cards exist before the fade-in is set up
   run(applyConfig);
+  run(initAccountLink);
   run(initMenu);
   run(initActiveLink);
   run(initYear);

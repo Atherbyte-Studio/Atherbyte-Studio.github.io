@@ -31,6 +31,27 @@
 window.ATHERBYTE_CONFIG = {
   email: "atherbyte.studio@gmail.com",
 
+  /*
+    account: the Atherbyte account service (used by /account/ and by the games).
+      apiBaseUrl        The address of the Atherbyte API (the Cloudflare Worker), for example
+                        "https://atherbyte-api.YOUR-NAME.workers.dev". Leave it "" until the Worker is deployed:
+                        the account page then says accounts are not available yet, and no game is gated.
+                        https only. Never put a key or password here: this file is public.
+      turnstileSiteKey  The PUBLIC site key of your Cloudflare Turnstile widget (not the secret key).
+                        Leave "" if the Worker runs with the security check turned off.
+      features          Switches for parts that need more server work. Keep them false until that work is deployed.
+                          recoveryEmail  adding and verifying a real email
+                          avatarUpload   profile pictures (only ever offered after the email is verified)
+  */
+  account: {
+    apiBaseUrl: "",
+    turnstileSiteKey: "",
+    features: {
+      recoveryEmail: false,
+      avatarUpload: false
+    }
+  },
+
   testimonials: [
   ],
 
