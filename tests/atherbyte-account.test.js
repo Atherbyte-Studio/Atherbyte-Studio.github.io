@@ -70,7 +70,7 @@ test('bad input is rejected before any request is sent', async () => {
 });
 
 test('every server error code gets a readable message, never the raw code', async () => {
-  for (const code of ['username_taken', 'invalid_credentials', 'rate_limited', 'captcha_failed', 'captcha_not_configured', 'upstream_error', 'unauthorized', 'origin_not_allowed']) {
+  for (const code of ['username_taken', 'weak_password', 'invalid_credentials', 'rate_limited', 'captcha_failed', 'captcha_not_configured', 'upstream_error', 'unauthorized', 'origin_not_allowed']) {
     const { client } = make(() => res(400, { error: code }));
     const r = await client.login('alice_01', 'pw-123456');
     assert.equal(r.ok, false);
@@ -203,4 +203,12 @@ test('the client contains no keys or secrets', () => {
   assert.ok(!/sb_secret_|sb_publishable_|service_role|eyJ[A-Za-z0-9_-]{20,}/.test(src));
   const cfg = require('node:fs').readFileSync(require.resolve('../js/site-config.js'), 'utf8');
   assert.ok(!/sb_secret_|sb_publishable_|service_role|eyJ[A-Za-z0-9_-]{20,}/.test(cfg));
+});
+
+test('register shows a clear message when the server rejects a weak password', async () => {
+  const { client } = make(() => res(400, { error: 'weak_password' }));
+  const r = await client.register('alice_01', 'correct horse 1', 'tok-123456789');
+  assert.equal(r.ok, false);
+  assert.equal(r.code, 'weak_password');
+  assert.match(r.message, /password is too easy to guess/);
 });
