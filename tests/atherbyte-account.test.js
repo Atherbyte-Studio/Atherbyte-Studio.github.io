@@ -212,3 +212,58 @@ test('register shows a clear message when the server rejects a weak password', a
   assert.equal(r.code, 'weak_password');
   assert.match(r.message, /password is too easy to guess/);
 });
+
+// ---------------------------------------------------------------- site wiring guards (read the real files)
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const ROOT = path.join(__dirname, '..');
+const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
+
+test('Account is reachable from the main navigation and footer of the home, games and account pages', () => {
+  for (const f of ['index.html', 'games/index.html', 'account/index.html']) {
+    const html = read(f);
+    const hits = (html.match(/<li><a href="\/account\/"[^>]*>Account<\/a><\/li>/g) || []).length;
+    assert.ok(hits >= 2, f + ' needs an Account link in both the header nav and the footer (found ' + hits + ')');
+  }
+});
+
+test('the configured API address is https, public, and allowed by the account page CSP', () => {
+  const cfg = read('js/site-config.js');
+  const base = /apiBaseUrl:\s*"([^"]*)"/.exec(cfg)[1];
+  assert.match(base, /^https:\/\/[a-z0-9.-]+$/, 'apiBaseUrl must be a bare https origin');
+  const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(read('account/index.html'))[1];
+  const connect = /connect-src ([^;]+)/.exec(csp)[1].split(/\s+/);
+  const host = new URL(base).host;
+  const allowed = connect.some((src) => {
+    if (!src.startsWith('https://')) return false;
+    const h = src.slice(8);
+    return h === host || (h.startsWith('*.') && host.endsWith(h.slice(1)) && host.length > h.length - 1);
+  });
+  assert.ok(allowed, 'CSP connect-src does not allow ' + host);
+});
+
+test('the account page CSP hash matches its inline script, and every local script/style it loads exists', () => {
+  const html = read('account/index.html');
+  const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)[1];
+  const inline = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+  assert.ok(inline.length >= 1);
+  for (const code of inline) {
+    const h = "'sha256-" + crypto.createHash('sha256').update(code, 'utf8').digest('base64') + "'";
+    assert.ok(csp.includes(h), 'inline script is blocked by CSP (hash mismatch)');
+  }
+  for (const m of html.matchAll(/(?:src|href)="(\/(?:js|css)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(ROOT, m[1])), 'missing file ' + m[1]);
+});
+
+test('every element id that js/account-page.js looks up exists in account/index.html', () => {
+  const js = read('js/account-page.js');
+  const html = read('account/index.html');
+  const ids = new Set([...js.matchAll(/\$\("([A-Za-z0-9_-]+)"\)/g)].map((m) => m[1]));
+  assert.ok(ids.size > 10);
+  for (const id of ids) assert.ok(html.includes('id="' + id + '"'), 'account-page.js uses #' + id + ' but the page has no such element');
+});
+
+test('the Turnstile key in the site config is a public site key (length guard against pasting a secret)', () => {
+  const key = /turnstileSiteKey:\s*"([^"]*)"/.exec(read('js/site-config.js'))[1];
+  assert.match(key, /^0x4[A-Za-z0-9_-]{15,30}$/, 'site keys are about 24 characters; secret keys are longer and must never be here');
+});

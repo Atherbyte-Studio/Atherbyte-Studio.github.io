@@ -44,8 +44,8 @@ window.ATHERBYTE_CONFIG = {
                           avatarUpload   profile pictures (only ever offered after the email is verified)
   */
   account: {
-    apiBaseUrl: "",
-    turnstileSiteKey: "",
+    apiBaseUrl: "https://atherbyte-api.assouliwaseem391.workers.dev",   // temporary: switch to https://api.atherbyte.online once that domain is attached
+    turnstileSiteKey: "0x4AAAAAAFoYIBy3fYFZeZxm",   // PUBLIC site key (safe in Git). The secret key lives only in the Worker.
     features: {
       recoveryEmail: false,
       avatarUpload: false
