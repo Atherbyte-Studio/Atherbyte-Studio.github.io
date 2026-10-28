@@ -262,3 +262,8 @@ test('every element id that js/account-page.js looks up exists in account/index.
   assert.ok(ids.size > 10);
   for (const id of ids) assert.ok(html.includes('id="' + id + '"'), 'account-page.js uses #' + id + ' but the page has no such element');
 });
+
+test('the Turnstile key in the site config is a public site key (length guard against pasting a secret)', () => {
+  const key = /turnstileSiteKey:\s*"([^"]*)"/.exec(read('js/site-config.js'))[1];
+  assert.match(key, /^0x4[A-Za-z0-9_-]{15,30}$/, 'site keys are about 24 characters; secret keys are longer and must never be here');
+});
