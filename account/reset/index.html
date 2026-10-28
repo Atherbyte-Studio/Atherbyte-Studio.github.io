@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reset password | Atherbyte Studio</title>
+  <meta name="description" content="Choose a new password for your Atherbyte account.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0B0F">
+  <meta name="color-scheme" content="dark">
+  <link rel="canonical" href="https://atherbyte.online/account/reset/">
+  <meta name="referrer" content="no-referrer">
+
+  <!-- This page handles passwords, so it is locked down: only its own scripts, the Cloudflare security check
+       (Turnstile) and the Atherbyte API address are allowed. If the API moves to another address, add it to connect-src. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk='; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.workers.dev https://api.atherbyte.online; base-uri 'none'; form-action 'self'">
+
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/assets/images/favicon.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+
+  <script>document.documentElement.classList.add("js");</script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/account.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="Atherbyte Studio, go to the home page">
+        <img src="/assets/images/atherbyte-mark.webp" alt="" width="40" height="40">
+        <span class="brand-name">Atherbyte <span>Studio</span></span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main">
+        <ul class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/games/">Games</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="/account/">Account</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section account-section" aria-labelledby="reset-title">
+      <div class="container account-wrap">
+        <p class="eyebrow">Atherbyte account</p>
+        <h1 class="section-title" id="reset-title">Choose a new password</h1>
+
+        <noscript><p class="notice notice-warn">This page needs JavaScript to reset a password.</p></noscript>
+        <div id="acc-notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+        <div id="view-checking" class="card" hidden>
+          <p class="card-text">Checking your reset link&hellip;</p>
+        </div>
+
+        <form id="reset-form" class="card form" hidden novalidate>
+          <p class="card-text" id="reset-for"></p>
+          <div class="field">
+            <label for="new-password">New password</label>
+            <div class="pw-wrap">
+              <input id="new-password" name="password" type="password" autocomplete="new-password" maxlength="72" required aria-describedby="new-password-hint">
+              <button class="pw-toggle" type="button" data-toggle-for="new-password" aria-pressed="false">Show</button>
+            </div>
+            <p class="field-hint" id="new-password-hint">8 to 72 characters, different from your username and from your old password.</p>
+          </div>
+          <div class="field">
+            <label for="new-password2">Type it again</label>
+            <input id="new-password2" name="password2" type="password" autocomplete="new-password" maxlength="72" required>
+          </div>
+          <p class="form-error" role="alert" hidden></p>
+          <button class="btn btn-primary" type="submit"><span class="btn-label">Save new password</span></button>
+        </form>
+
+        <div id="view-invalid" class="card" hidden>
+          <p class="card-text"><strong>This reset link is not valid.</strong> It may have expired or already been used. Reset links work once and only for a short time.</p>
+          <div class="card-actions"><a class="btn btn-primary" href="/account/">Request a new link</a></div>
+        </div>
+
+        <div id="view-done" class="card" hidden>
+          <p class="card-text"><strong>Your password was changed.</strong> You were signed out everywhere for safety. Sign in with your new password.</p>
+          <div class="card-actions"><a class="btn btn-primary" href="/account/">Sign in</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/" aria-label="Atherbyte Studio, go to the home page">
+          <img src="/assets/images/atherbyte-mark.webp" alt="" width="40" height="40" loading="lazy">
+          <span class="brand-name">Atherbyte <span>Studio</span></span>
+        </a>
+        <p>An independent studio for browser games and interactive web experiences.</p>
+      </div>
+
+      <nav aria-label="Footer">
+        <p class="footer-heading">Explore</p>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/games/">Games</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="/account/">Account</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; <span data-year>2026</span> Atherbyte Studio. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Order matters: settings, then the account client, then the site menu script, then this page. -->
+  <script src="/js/site-config.js"></script>
+  <script src="/js/atherbyte-account.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/reset-page.js"></script>
+</body>
+</html>

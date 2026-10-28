@@ -120,3 +120,10 @@
 .badge-ok { background: rgba(74, 222, 128, 0.12); color: #4ADE80; border: 1px solid rgba(74, 222, 128, 0.4); }
 
 #section-email .form { margin-top: 18px; }
+
+/* ---------- small text-style button (forgot password, back) and an info badge ---------- */
+.link-button { background: none; border: 0; padding: 0; margin: 0; color: var(--accent-2, #B79CFF); font: inherit; text-decoration: underline; cursor: pointer; }
+.link-button:hover { color: #fff; }
+.link-button:focus-visible { outline: 2px solid var(--accent, #885CFF); outline-offset: 2px; border-radius: 4px; }
+.badge-info { background: rgba(136, 92, 255, 0.14); color: #B79CFF; border: 1px solid rgba(136, 92, 255, 0.45); }
+#panel-forgot .link-button { align-self: flex-start; }
