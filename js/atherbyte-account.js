@@ -42,6 +42,10 @@
     invalid_password: "Use a password of 8 to 72 characters that is different from your username.",
     username_taken: "That username is already taken. Please choose another.",
     weak_password: "That password is too easy to guess. Please choose a longer, less common one.",
+    same_password: "Please choose a password different from your current one.",
+    invalid_email: "That email address doesn't look right. Please check it and try again.",
+    invalid_identifier: "Enter your username or your recovery email.",
+    invalid_reset_link: "This reset link is not valid. It may have expired or already been used.",
     invalid_credentials: "Wrong username or password.",
     rate_limited: "Too many attempts. Please wait a minute and try again.",
     rate_limit_unavailable: "The account service is not ready yet. Please try again later.",
@@ -71,6 +75,14 @@
   }
 
   /* ---------- validation (mirrors the server; the server always checks again) ---------- */
+  var EMAIL_RE = /^[A-Za-z0-9._%+-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,24}$/;
+  function validateEmail(input) {
+    var v = typeof input === "string" ? input.trim().toLowerCase() : "";
+    if (!v || v.length > 254 || !EMAIL_RE.test(v)) { return { ok: false, code: "invalid_email" }; }
+    return { ok: true, email: v };
+  }
+  function maskEmail(v) { var at = v.lastIndexOf("@"); return v.charAt(0) + "***" + v.slice(at); }
+
   function validateUsername(input) {
     if (typeof input !== "string" || !USERNAME_RE.test(input) || !/[A-Za-z0-9]/.test(input)) {
       return { ok: false, code: "invalid_username" };
@@ -277,6 +289,49 @@
         });
       },
 
+      /* Asks the server to send a confirmation link to this address. The answer is always "pending": the server
+         does not say whether the address is already used elsewhere. */
+      setEmail: function (email) {
+        var e = validateEmail(email);
+        if (!e.ok) { return Promise.resolve(fail(e.code)); }
+        return client.authed("/v1/me/email", { method: "POST", body: { email: e.email } }).then(function (r) {
+          if (!r.ok) { return fail(r.code, { status: r.status }); }
+          return { ok: true, status: "pending", hint: maskEmail(e.email) };
+        });
+      },
+
+      /* "Forgot password": username or email. The server always answers the same, so this does too. */
+      forgot: function (identifier, turnstileToken) {
+        var id = typeof identifier === "string" ? identifier.trim() : "";
+        if (!id || id.length > 254) { return Promise.resolve(fail("invalid_identifier")); }
+        var body = { identifier: id };
+        if (turnstileToken) { body.turnstileToken = turnstileToken; }
+        return request("/v1/auth/forgot", { method: "POST", body: body }).then(function (r) {
+          return r.ok ? { ok: true } : fail(r.code, { status: r.status });
+        });
+      },
+
+      /* Checks a reset link's token with the server before showing the form. Resolves { ok, username }. */
+      checkResetToken: function (token) {
+        if (typeof token !== "string" || !token) { return Promise.resolve(fail("invalid_reset_link")); }
+        return request("/v1/me", { token: token }).then(function (r) {
+          if (r.ok && r.data && typeof r.data.username === "string") { return { ok: true, username: r.data.username }; }
+          if (r.status === 401 || r.status === 404) { return fail("invalid_reset_link"); }
+          return fail(r.code || "bad_response", { status: r.status });
+        });
+      },
+
+      /* Sets the new password. On success the server has signed every session out, so the local one goes too. */
+      resetPassword: function (token, password, username) {
+        var p = validatePassword(password, username);
+        if (!p.ok) { return Promise.resolve(fail(p.code)); }
+        return request("/v1/auth/reset", { method: "POST", body: { access_token: token, password: password } }).then(function (r) {
+          if (!r.ok) { return fail(r.code, { status: r.status }); }
+          clearSession();
+          return { ok: true };
+        });
+      },
+
       /* Signs out here at once, then asks the server to revoke the session (best effort). */
       logout: function () {
         var s = readSession();
@@ -314,7 +369,7 @@
 
   return {
     SESSION_KEY: SESSION_KEY, MESSAGES: MESSAGES, messageFor: messageFor,
-    validateUsername: validateUsername, validatePassword: validatePassword,
+    validateUsername: validateUsername, validatePassword: validatePassword, validateEmail: validateEmail, maskEmail: maskEmail,
     safeNext: safeNext, normalizeBase: normalizeBase, create: create, get: get
   };
 });

@@ -267,3 +267,98 @@ test('the Turnstile key in the site config is a public site key (length guard ag
   const key = /turnstileSiteKey:\s*"([^"]*)"/.exec(read('js/site-config.js'))[1];
   assert.match(key, /^0x4[A-Za-z0-9_-]{15,30}$/, 'site keys are about 24 characters; secret keys are longer and must never be here');
 });
+
+// ---------------------------------------------------------------- recovery email and password reset (client)
+function signedIn(handler) {
+  const st = memStorage();
+  st.setItem(KEY, JSON.stringify({ ...SESSION, user: USER }));
+  return make(handler, { storage: st });
+}
+
+test('setEmail: validates first, sends only the lower-cased address with the user token, and returns a masked hint', async () => {
+  const s = signedIn(() => res(202, { status: 'pending' }));
+  assert.equal((await s.client.setEmail('nope')).code, 'invalid_email');
+  assert.equal(s.calls.length, 0, 'a bad address never reaches the server');
+  const r = await s.client.setEmail('  Bob@Example.com ');
+  assert.deepEqual([r.ok, r.status, r.hint], [true, 'pending', 'b***@example.com']);
+  assert.equal(s.calls[0].url, BASE + '/v1/me/email');
+  assert.equal(s.calls[0].opts.headers.Authorization, 'Bearer a1');
+  assert.deepEqual(JSON.parse(s.calls[0].opts.body), { email: 'bob@example.com' });
+});
+
+test('setEmail: needs a session, and server errors become readable messages', async () => {
+  const anon = make(() => res(202, {}));
+  assert.equal((await anon.client.setEmail('bob@example.com')).code, 'unauthorized');
+  const limited = signedIn(() => res(429, { error: 'rate_limited' }));
+  const r = await limited.client.setEmail('bob@example.com');
+  assert.equal(r.ok, false);
+  assert.equal(r.code, 'rate_limited');
+  assert.ok(r.message && !r.message.includes('_'));
+});
+
+test('forgot: sends the identifier and captcha token without any session, and gives one neutral result', async () => {
+  const s = make(() => res(202, { ok: true }));
+  assert.equal((await s.client.forgot('   ')).code, 'invalid_identifier');
+  const r = await s.client.forgot(' Alice_01 ', 'tok-123456789');
+  assert.equal(r.ok, true);
+  assert.equal(s.calls[0].url, BASE + '/v1/auth/forgot');
+  assert.equal(s.calls[0].opts.headers.Authorization, undefined);
+  assert.deepEqual(JSON.parse(s.calls[0].opts.body), { identifier: 'Alice_01', turnstileToken: 'tok-123456789' });
+});
+
+test('checkResetToken: valid token gives the username; refused or empty tokens give invalid_reset_link', async () => {
+  const good = make((path, opts) => (opts.headers.Authorization === 'Bearer recov-token' ? res(200, { username: 'alice_01' }) : res(401, { error: 'unauthorized' })));
+  assert.deepEqual(await good.client.checkResetToken('recov-token'), { ok: true, username: 'alice_01' });
+  assert.equal((await good.client.checkResetToken('other')).code, 'invalid_reset_link');
+  assert.equal((await good.client.checkResetToken('')).code, 'invalid_reset_link');
+  assert.equal(good.storage._m.size, 0, 'the reset token is never stored');
+});
+
+test('resetPassword: applies the password rules locally, posts the token in the body, and ends the local session', async () => {
+  const s = signedIn(() => res(200, { ok: true }));
+  assert.equal((await s.client.resetPassword('t', 'short', 'alice_01')).code, 'invalid_password');
+  assert.equal((await s.client.resetPassword('t', 'ALICE_01', 'alice_01')).code, 'invalid_password');
+  assert.equal(s.calls.length, 0);
+  const r = await s.client.resetPassword('recov-token', 'brand new pass 9', 'alice_01');
+  assert.equal(r.ok, true);
+  assert.equal(s.calls[0].url, BASE + '/v1/auth/reset');
+  assert.deepEqual(JSON.parse(s.calls[0].opts.body), { access_token: 'recov-token', password: 'brand new pass 9' });
+  assert.equal(s.client.hasSession(), false, 'the server signed every session out, so the local one goes too');
+  const bad = signedIn(() => res(401, { error: 'invalid_reset_link' }));
+  const rb = await bad.client.resetPassword('t', 'brand new pass 9', 'alice_01');
+  assert.equal(rb.code, 'invalid_reset_link');
+  assert.equal(bad.client.hasSession(), true, 'a failed reset does not sign anyone out');
+});
+
+test('every new server error code has a readable message', () => {
+  for (const code of ['invalid_email', 'invalid_identifier', 'invalid_reset_link', 'same_password', 'weak_password']) {
+    const m = A.messageFor(code);
+    assert.ok(m && !m.includes('_') && m !== A.messageFor('something_new'), code);
+  }
+});
+
+// ---------------------------------------------------------------- page wiring (reads the real files)
+test('the reset page: files exist, CSP hash matches, API host allowed, no captcha host, and it has the ids its script uses', () => {
+  const html = read('account/reset/index.html');
+  const js = read('js/reset-page.js');
+  const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)[1];
+  for (const code of [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1])) {
+    assert.ok(csp.includes("'sha256-" + crypto.createHash('sha256').update(code, 'utf8').digest('base64') + "'"), 'inline script blocked by CSP');
+  }
+  for (const m of html.matchAll(/(?:src|href)="(\/(?:js|css)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(ROOT, m[1])), 'missing ' + m[1]);
+  assert.ok(/connect-src[^;]*https:\/\/\*\.workers\.dev/.test(csp) && /connect-src[^;]*https:\/\/api\.atherbyte\.online/.test(csp));
+  assert.ok(!csp.includes('challenges.cloudflare.com'), 'the reset page does not use a captcha');
+  assert.match(html, /<meta name="referrer" content="no-referrer">/);
+  assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
+  for (const id of new Set([...js.matchAll(/\$\("([A-Za-z0-9_-]+)"\)/g)].map((m) => m[1]))) assert.ok(html.includes('id="' + id + '"'), 'reset-page.js uses #' + id);
+  assert.ok(html.indexOf('/js/atherbyte-account.js') < html.indexOf('/js/reset-page.js'), 'script order');
+});
+
+test('the account page has every control for the email flow and the forgot form, and the feature is switched on', () => {
+  const html = read('account/index.html');
+  for (const id of ['email-form', 'email-input', 'email-state', 'email-pending', 'email-hint', 'email-verified', 'forgot-link', 'forgot-back', 'panel-forgot', 'forgot-identifier', 'forgot-done'])
+    assert.ok(html.includes('id="' + id + '"'), id);
+  assert.ok(html.includes('data-captcha-for="forgot"'));
+  assert.ok(!/id="email-input"[^>]*disabled/.test(html), 'the email field must not be disabled in the markup');
+  assert.match(read('js/site-config.js'), /recoveryEmail:\s*true/);
+});
