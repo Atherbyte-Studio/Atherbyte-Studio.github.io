@@ -147,6 +147,8 @@
   function goNextOrProfile() {
     if (NEXT) { window.location.assign(NEXT); return; }
     renderUser();
+    // Show the real recovery-email state right away (the quick view above only knows the username).
+    refreshProfile(false, true);
   }
 
   /* ---------- sign in ---------- */
@@ -195,8 +197,12 @@
 
   /* ---------- the signed-in view ---------- */
   /* One place decides how the recovery email card looks: "none" (not verified), "pending" or "verified". */
+  var emailStatus = "none";
   function setEmailState(status, hint) {
     var verified = status === "verified", pending = status === "pending";
+    emailStatus = status;
+    $("email-refresh").hidden = !pending;
+    if (pending) { startWatching(); } else { stopWatching(); }
     var state = $("email-state");
     state.textContent = verified ? "Verified" : (pending ? "Waiting for confirmation" : "Not verified");
     state.className = "badge " + (verified ? "badge-ok" : (pending ? "badge-info" : "badge-warn"));
@@ -208,6 +214,38 @@
     note.textContent = pending ? "We sent a confirmation link" + (hint ? " to " + hint : "") + ". Open it to finish. If it has not arrived after a few minutes, check your spam folder or send it again." : "";
     $("email-form").querySelector(".btn-label").textContent = pending ? "Send the link again" : "Send verification link";
   }
+
+  /* While a confirmation is pending, the page asks the server again: when the visitor comes back to this tab, every
+     15 seconds while it is visible (for about 10 minutes), and when they press the button. The link is usually opened
+     in another tab or app, so without this the page would keep showing an old answer until it is reloaded. */
+  var watchTimer = null, watchTicks = 0;
+  function refreshProfile(manual, quiet) {
+    if (!client.hasSession() || views.user.hidden) { return Promise.resolve(); }
+    return client.me().then(function (r) {
+      if (!r.ok) { if (manual) { say("warn", r.message); } return; }
+      var before = emailStatus;
+      renderUser(r.profile);
+      if (!quiet && before !== "verified" && emailStatus === "verified") { say("success", "Your recovery email is now verified."); }
+      else if (!quiet && manual && emailStatus === "pending") { say("info", "Still waiting for the confirmation. Open the link in the email we sent" + (r.profile && r.profile.recovery_email_hint ? " to " + r.profile.recovery_email_hint : "") + "."); }
+    });
+  }
+  function startWatching() {
+    if (watchTimer) { return; }
+    watchTicks = 0;
+    watchTimer = window.setInterval(function () {
+      watchTicks += 1;
+      if (watchTicks > 40) { stopWatching(); return; }
+      if (document.visibilityState === "visible") { refreshProfile(false); }
+    }, 15000);
+  }
+  function stopWatching() { if (watchTimer) { window.clearInterval(watchTimer); watchTimer = null; } }
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible" && emailStatus === "pending") { refreshProfile(false); } });
+  window.addEventListener("focus", function () { if (emailStatus === "pending") { refreshProfile(false); } });
+  $("email-refresh").addEventListener("click", function () {
+    var b = $("email-refresh");
+    b.disabled = true;
+    refreshProfile(true).then(function () { b.disabled = false; });
+  });
 
   panelsEmailInit();
   function panelsEmailInit() {
@@ -260,6 +298,7 @@
     var button = $("signout");
     setBusy(button, true, "Signing out…");
     client.logout().then(function () {
+      stopWatching();
       setBusy(button, false);
       say("info", "You are signed out.");
       showView("guest");
@@ -272,17 +311,28 @@
      We never use or store those: the result is only used to pick a message, then the address is cleaned. The real
      state always comes from the server (the card below), so a forged address can only change a message. */
   function returnFromLink() {
-    var h = window.location.hash.replace(/^#/, "");
-    if (h.indexOf("=") < 0) { return null; }
-    var p = new URLSearchParams(h);
-    if (!(p.has("error") || p.has("error_code") || p.has("access_token") || p.has("type") || p.has("message"))) { return null; }
-    var result = (p.has("error") || p.has("error_code")) ? (p.get("error_code") === "otp_expired" ? "expired" : "failed") : "opened";
-    try { window.history.replaceState(null, "", window.location.pathname + window.location.search); } catch (e) { /* ignore */ }
+    var fromHash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    var fromQuery = new URLSearchParams(window.location.search);
+    var QUERY_KEYS = ["error", "error_code", "message"];     // the only things we read from the query: "next" etc. stay untouched
+    function get(k) { return fromHash.get(k) || (QUERY_KEYS.indexOf(k) >= 0 ? fromQuery.get(k) : null) || ""; }
+    function has(k) { return fromHash.has(k) || (QUERY_KEYS.indexOf(k) >= 0 && fromQuery.has(k)); }
+    if (!(has("error") || has("error_code") || has("message") || fromHash.has("access_token") || fromHash.has("type"))) { return null; }
+    var result;
+    if (has("error") || has("error_code")) { result = get("error_code") === "otp_expired" ? "expired" : "failed"; }
+    else if (/confirmation link accepted|other email/i.test(get("message"))) { result = "second_step"; }
+    else { result = "opened"; }
+    try {
+      var keep = new URLSearchParams(window.location.search);
+      QUERY_KEYS.forEach(function (k) { keep.delete(k); });
+      var qs = keep.toString();
+      window.history.replaceState(null, "", window.location.pathname + (qs ? "?" + qs : ""));
+    } catch (e) { /* ignore */ }
     return result;
   }
   function returnMessage(result, signedIn) {
     if (result === "expired") { say("warn", "That email link has expired or was already used. Send a new one from your account page."); }
     else if (result === "failed") { say("warn", "That email link did not work. Please send a new one from your account page."); }
+    else if (result === "second_step") { say("warn", "Your link was accepted, but the email change is not finished: the service is still waiting for a second confirmation that cannot be completed from this account. This is a setting on our side, not a mistake of yours. Your status below is accurate."); }
     else if (result === "opened") { say("info", signedIn ? "Thanks for opening the link. Your recovery email status is shown below." : "Thanks for opening the link. Sign in to see your recovery email status."); }
   }
 
