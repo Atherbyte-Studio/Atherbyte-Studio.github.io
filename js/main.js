@@ -55,8 +55,10 @@
     var account = accountClient();
     if (!account || !account.isConfigured()) { return; }
     var label = $("[data-account-link] span");
-    if (label && account.hasSession()) { label.textContent = account.username(); }
-    else if (label) { label.textContent = "Sign in"; }
+    if (!label) { return; }
+    function update() { label.textContent = account.hasSession() ? account.username() : "Sign in"; }
+    update();
+    if (account.onChange) { account.onChange(update); }   // signing in or out on the Account page updates the button at once
   }
 
   /* ---------- 3. Copy the contact email ---------- */

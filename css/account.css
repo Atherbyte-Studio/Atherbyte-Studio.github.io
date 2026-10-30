@@ -127,3 +127,6 @@
 .link-button:focus-visible { outline: 2px solid var(--accent, #885CFF); outline-offset: 2px; border-radius: 4px; }
 .badge-info { background: rgba(136, 92, 255, 0.14); color: #B79CFF; border: 1px solid rgba(136, 92, 255, 0.45); }
 #panel-forgot .link-button { align-self: flex-start; }
+
+/* The page's views start hidden and the script shows one, so reserve the space up front: the footer then does not jump. */
+.account-section { min-height: calc(100vh - var(--header-h)); }

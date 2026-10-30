@@ -103,7 +103,12 @@ function actions(p) {
   return `<p class="pcard-note">${note}</p>`;
 }
 
+/* The first picture on a page is usually the largest thing visible, so it loads straight away (the rest stay lazy). */
+const state = { eagerUsed: false };
+
 function productCard(p, { variant = "card", level = 3, eager = false } = {}) {
+  if (!eager && !state.eagerUsed && p.visual.type === "image") eager = true;
+  if (eager) state.eagerUsed = true;
   const tags = p.tags && p.tags.length ? `<ul class="tag-list">${p.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : "";
   const text = variant === "compact" ? p.summary : p.summary;
   return `<article class="pcard pcard-${variant} reveal" data-status="${p.status}">
@@ -176,6 +181,7 @@ function categoryPanels() {
 }
 
 function heroVisual() {
+  state.eagerUsed = true;
   const snake = byId("grid-snake");
   const timer = byId("stop-the-timer");
   const mind = byId("mind-clash");
@@ -350,6 +356,7 @@ function buildPage(file) {
   if (!m) throw new Error(`${file}: missing <!--meta {...}--> block at the top`);
   const meta = JSON.parse(m[1]);
   if (meta.home) meta.jsonld = ORG_LD;
+  state.eagerUsed = false;
   const ctx = { meta, file };
   const body = render(src.slice(m[0].length), ctx);
   const html = `<!doctype html>
