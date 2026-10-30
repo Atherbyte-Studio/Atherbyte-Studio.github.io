@@ -12,7 +12,7 @@
 
   <!-- This page handles passwords, so it is locked down: only its own scripts, the Cloudflare security check
        (Turnstile) and the Atherbyte API address are allowed. If the API moves to another address, add it to connect-src. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.workers.dev https://api.atherbyte.online https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.workers.dev https://api.atherbyte.online https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; base-uri 'none'; form-action 'self'">
 
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/assets/images/favicon.png" type="image/png" sizes="192x192">
@@ -184,6 +184,22 @@
             <h2 class="card-title card-title-sm">Profile picture</h2>
             <p id="avatar-locked" class="card-text">Profile pictures unlock after you verify a recovery email.</p>
             <p id="avatar-soon" class="card-text" hidden>Your email is verified. Picture uploads aren&rsquo;t open yet.</p>
+            <div id="avatar-editor" hidden>
+              <div class="avatar-row">
+                <div class="avatar avatar-lg" id="avatar-preview" aria-hidden="true"><span id="avatar-initial"></span><img id="avatar-img" alt="" width="96" height="96" hidden></div>
+                <div class="avatar-copy">
+                  <p class="card-text">This picture is shown next to your name on this website and in every Atherbyte game. PNG, JPEG or WebP.</p>
+                  <input type="file" id="avatar-file" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
+                  <div class="card-actions">
+                    <label class="btn btn-secondary" for="avatar-file" id="avatar-choose"><span class="btn-label">Choose a picture</span></label>
+                    <button class="btn btn-primary" id="avatar-save" type="button" hidden><span class="btn-label">Save picture</span></button>
+                    <button class="btn btn-secondary" id="avatar-remove" type="button" hidden><span class="btn-label">Remove picture</span></button>
+                  </div>
+                  <p class="form-error" id="avatar-error" role="alert" hidden></p>
+                  <p class="form-hint" id="avatar-status" role="status" aria-live="polite" hidden></p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

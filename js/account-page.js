@@ -271,6 +271,98 @@
     });
   }
 
+  /* ---------- profile picture ---------- */
+  // The upload form only exists for an account with a verified recovery email, and only once the feature is switched on in
+  // js/site-config.js. The server checks both again on every upload, so this is a convenience, not the lock.
+  var avatarBlob = null;
+  var avatarPreviewUrl = "";
+  function avatarMessage(kind, text) {
+    var err = $("avatar-error"), status = $("avatar-status");
+    err.hidden = kind !== "error" || !text; err.textContent = kind === "error" ? text : "";
+    status.hidden = kind !== "ok" || !text; status.textContent = kind === "ok" ? text : "";
+  }
+  function showAvatar(url) {
+    var img = $("avatar-img");
+    if (avatarPreviewUrl && url !== avatarPreviewUrl) { URL.revokeObjectURL(avatarPreviewUrl); avatarPreviewUrl = ""; }
+    $("avatar-initial").textContent = (client.username() || "?").charAt(0).toUpperCase();
+    img.hidden = !url;
+    if (url) { img.src = url; } else { img.removeAttribute("src"); }
+    $("avatar-remove").hidden = !client.avatarUrl() || !!avatarBlob;
+    $("avatar-save").hidden = !avatarBlob;
+  }
+  // Crops the middle square, scales it to 256 x 256 and re-encodes it (WebP, or JPEG where WebP is not available),
+  // so the file is small and always a clean picture. Resolves to a Blob, or null when the browser cannot read the file.
+  function prepareAvatar(file) {
+    return new Promise(function (resolve) {
+      var src = URL.createObjectURL(file);
+      var image = new Image();
+      image.onerror = function () { URL.revokeObjectURL(src); resolve(null); };
+      image.onload = function () {
+        URL.revokeObjectURL(src);
+        var side = Math.min(image.naturalWidth, image.naturalHeight);
+        if (!side) { resolve(null); return; }
+        var canvas = document.createElement("canvas");
+        canvas.width = 256; canvas.height = 256;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(image, (image.naturalWidth - side) / 2, (image.naturalHeight - side) / 2, side, side, 0, 0, 256, 256);
+        var tries = [["image/webp", 0.85], ["image/webp", 0.7], ["image/jpeg", 0.85], ["image/jpeg", 0.6]];
+        (function next(i) {
+          if (i >= tries.length) { resolve(null); return; }
+          canvas.toBlob(function (blob) {
+            if (blob && blob.type === tries[i][0] && blob.size <= A.AVATAR_MAX_BYTES) { resolve(blob); } else { next(i + 1); }
+          }, tries[i][0], tries[i][1]);
+        })(0);
+      };
+      image.src = src;
+    });
+  }
+  if ($("avatar-file")) {
+    $("avatar-file").addEventListener("change", function () {
+      var file = this.files && this.files[0];
+      this.value = "";
+      avatarMessage("", "");
+      if (!file) { return; }
+      if (["image/png", "image/jpeg", "image/webp"].indexOf(file.type) < 0) { avatarMessage("error", A.messageFor("invalid_image")); return; }
+      if (file.size > 10 * 1024 * 1024) { avatarMessage("error", A.messageFor("image_too_large")); return; }
+      prepareAvatar(file).then(function (blob) {
+        if (!blob) { avatarMessage("error", A.messageFor("image_unusable")); return; }
+        avatarBlob = blob;
+        avatarPreviewUrl = URL.createObjectURL(blob);
+        showAvatar(avatarPreviewUrl);
+        avatarMessage("ok", "Preview only. Press Save picture to use it.");
+      });
+    });
+    $("avatar-save").addEventListener("click", function () {
+      var button = $("avatar-save");
+      if (!avatarBlob) { return; }
+      avatarMessage("", "");
+      setBusy(button, true, "Saving…");
+      client.uploadAvatar(avatarBlob).then(function (r) {
+        setBusy(button, false);
+        if (!r.ok) {
+          if (r.code === "unauthorized") { say("info", A.messageFor("unauthorized")); showView("guest"); loadCaptcha(); return; }
+          if (r.code === "email_not_verified") { $("avatar-editor").hidden = true; $("avatar-locked").hidden = false; }
+          avatarMessage("error", r.message);
+          return;
+        }
+        avatarBlob = null;
+        showAvatar(client.avatarUrl());
+        avatarMessage("ok", "Picture saved. It now shows everywhere you are signed in.");
+      });
+    });
+    $("avatar-remove").addEventListener("click", function () {
+      var button = $("avatar-remove");
+      avatarMessage("", "");
+      setBusy(button, true, "Removing…");
+      client.removeAvatar().then(function (r) {
+        setBusy(button, false);
+        if (!r.ok) { avatarMessage("error", r.message); return; }
+        showAvatar("");
+        avatarMessage("ok", "Picture removed.");
+      });
+    });
+  }
+
   function renderUser(profile) {
     var name = profile ? profile.username : client.username();
     var status = profile && typeof profile.recovery_email_status === "string" ? profile.recovery_email_status
@@ -288,6 +380,8 @@
     // Pictures: locked until the email is verified. Even then, the upload control only exists once that feature is switched on.
     $("avatar-locked").hidden = verified;
     $("avatar-soon").hidden = !verified || FEATURES.avatarUpload === true;
+    $("avatar-editor").hidden = !(verified && FEATURES.avatarUpload === true);
+    if (verified && FEATURES.avatarUpload === true) { avatarBlob = null; showAvatar(client.avatarUrl()); }
 
     var link = $("continue-link");
     if (NEXT) { link.href = NEXT; link.firstChild.nodeValue = "Continue"; }

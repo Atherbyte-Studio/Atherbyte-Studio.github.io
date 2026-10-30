@@ -363,3 +363,137 @@ test('the account page has every control for the email flow and the forgot form,
   assert.ok(!/id="email-input"[^>]*disabled/.test(html), 'the email field must not be disabled in the markup');
   assert.match(read('js/site-config.js'), /recoveryEmail:\s*true/);
 });
+
+// ---------------------------------------------------------------- profile picture
+const PIC = 'https://abcdefghij.supabase.co/storage/v1/object/public/avatars/00000000-0000-4000-8000-000000000001/avatar?v=1700000000000';
+const withSession = (extra) => { const s = memStorage(); s.setItem(KEY, JSON.stringify({ ...SESSION, user: USER })); return { ...(extra || {}), storage: s }; };
+const blob = (type = 'image/webp', size = 5000) => ({ type, size });
+
+test('picture address: only an address inside the avatars bucket is ever accepted', () => {
+  assert.equal(A.isAvatarUrl(PIC), true);
+  for (const bad of ['', null, 42, 'http://abcdefghij.supabase.co/storage/v1/object/public/avatars/00000000-0000-4000-8000-000000000001/avatar',
+    'https://evil.example/storage/v1/object/public/avatars/00000000-0000-4000-8000-000000000001/avatar',
+    'https://abcdefghij.supabase.co.evil.example/storage/v1/object/public/avatars/00000000-0000-4000-8000-000000000001/avatar',
+    'https://abcdefghij.supabase.co/storage/v1/object/public/other/00000000-0000-4000-8000-000000000001/avatar',
+    'javascript:alert(1)', PIC + '"onerror="x']) assert.equal(A.isAvatarUrl(bad), false, String(bad));
+});
+
+test('me() remembers the picture for this account; avatarUrl() reads it with no network call', async () => {
+  const { client, calls } = make(() => res(200, { id: USER.id, username: 'alice_01', avatar_url: PIC }), withSession());
+  assert.equal(client.avatarUrl(), '');
+  await client.me();
+  assert.equal(client.avatarUrl(), PIC);
+  const n = calls.length;
+  assert.equal(client.avatarUrl(), PIC);
+  assert.equal(calls.length, n);
+});
+
+test('a picture address that is not in the avatars bucket is ignored even if the server sends it', async () => {
+  const { client } = make(() => res(200, { id: USER.id, username: 'alice_01', avatar_url: 'https://evil.example/x.png' }), withSession());
+  await client.me();
+  assert.equal(client.avatarUrl(), '');
+});
+
+test('the remembered picture belongs to one account and disappears on sign out', async () => {
+  const { client, storage } = make((p) => (p === '/v1/auth/logout' ? res(204) : res(200, { id: USER.id, username: 'alice_01', avatar_url: PIC })), withSession());
+  await client.me();
+  assert.equal(client.avatarUrl(), PIC);
+  storage.setItem(KEY, JSON.stringify({ ...SESSION, user: { id: '00000000-0000-4000-8000-000000000002', username: 'bob_01' } }));
+  assert.equal(client.avatarUrl(), '', 'another account never sees it');
+  storage.setItem(KEY, JSON.stringify({ ...SESSION, user: USER }));
+  assert.equal(client.avatarUrl(), PIC);
+  await client.logout();
+  assert.equal(client.avatarUrl(), '');
+  assert.equal(storage.getItem(A.AVATAR_KEY), null);
+});
+
+test('uploadAvatar sends the picture itself (not JSON) with the token, and remembers the new address', async () => {
+  const { client, calls } = make(() => res(200, { avatar_url: PIC }), withSession());
+  const b = blob();
+  const r = await client.uploadAvatar(b);
+  assert.equal(r.ok, true);
+  assert.equal(r.avatarUrl, PIC);
+  assert.equal(calls[0].url, BASE + '/v1/me/avatar');
+  assert.equal(calls[0].opts.method, 'POST');
+  assert.equal(calls[0].opts.body, b);
+  assert.equal(calls[0].opts.headers['Content-Type'], 'image/webp');
+  assert.equal(calls[0].opts.headers.Authorization, 'Bearer a1');
+  assert.equal(calls[0].opts.credentials, 'omit');
+  assert.equal(client.avatarUrl(), PIC);
+});
+
+test('uploadAvatar refuses the wrong type, an empty or a too-big file before any request', async () => {
+  const { client, calls } = make(() => res(200, { avatar_url: PIC }), withSession());
+  assert.equal((await client.uploadAvatar(blob('image/svg+xml'))).code, 'invalid_image');
+  assert.equal((await client.uploadAvatar(blob('image/gif'))).code, 'invalid_image');
+  assert.equal((await client.uploadAvatar(blob('image/png', 0))).code, 'invalid_image');
+  assert.equal((await client.uploadAvatar(blob('image/png', A.AVATAR_MAX_BYTES + 1))).code, 'image_too_large');
+  assert.equal((await client.uploadAvatar(null)).code, 'invalid_image');
+  assert.equal(calls.length, 0);
+});
+
+test('uploadAvatar shows the server answer: an unverified account is told why, and nothing is remembered', async () => {
+  const { client } = make(() => res(403, { error: 'email_not_verified' }), withSession());
+  const r = await client.uploadAvatar(blob());
+  assert.equal(r.ok, false);
+  assert.equal(r.code, 'email_not_verified');
+  assert.match(r.message, /verify a recovery email/);
+  assert.equal(client.avatarUrl(), '');
+});
+
+test('uploadAvatar does not trust an odd address in the answer', async () => {
+  const { client } = make(() => res(200, { avatar_url: 'https://evil.example/a.png' }), withSession());
+  assert.equal((await client.uploadAvatar(blob())).ok, false);
+  assert.equal(client.avatarUrl(), '');
+});
+
+test('uploadAvatar needs a signed-in account', async () => {
+  const { client, calls } = make(() => res(200, { avatar_url: PIC }));
+  const r = await client.uploadAvatar(blob());
+  assert.equal(r.ok, false);
+  assert.equal(r.code, 'unauthorized');
+  assert.equal(calls.length, 0);
+});
+
+test('removeAvatar calls the server and forgets the picture', async () => {
+  const { client, calls } = make((p) => (p === '/v1/me' ? res(200, { id: USER.id, username: 'alice_01', avatar_url: PIC }) : res(200, { avatar_url: null })), withSession());
+  await client.me();
+  assert.equal(client.avatarUrl(), PIC);
+  const r = await client.removeAvatar();
+  assert.equal(r.ok, true);
+  assert.equal(calls[1].url, BASE + '/v1/me/avatar/remove');
+  assert.equal(client.avatarUrl(), '');
+});
+
+test('refreshAvatar asks the server at most once an hour', async () => {
+  let t = 1000000;
+  const { client, calls } = make(() => res(200, { id: USER.id, username: 'alice_01', avatar_url: PIC }), withSession({ now: () => t }));
+  assert.equal(await client.refreshAvatar(false), PIC);
+  assert.equal(calls.length, 1);
+  assert.equal(await client.refreshAvatar(false), PIC);
+  assert.equal(calls.length, 1, 'fresh enough: no request');
+  t += 61 * 60 * 1000;
+  await client.refreshAvatar(false);
+  assert.equal(calls.length, 2);
+  await client.refreshAvatar(true);
+  assert.equal(calls.length, 3);
+});
+
+test('refreshAvatar keeps what is shown when the network is down', async () => {
+  const { client } = make(() => { throw new Error('offline'); }, withSession());
+  assert.equal(await client.refreshAvatar(true), '');
+});
+
+test('the account page can show the picture: its policy allows the avatars host, and the editor controls exist', () => {
+  const html = read('account/index.html');
+  const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)[1];
+  const img = /img-src ([^;]+);/.exec(csp)[1];
+  assert.ok(/https:\/\/\*\.supabase\.co/.test(img) && /blob:/.test(img) && /'self'/.test(img));
+  assert.ok(!/unsafe-inline|unsafe-eval/.test(csp));
+  assert.ok(!/script-src[^;]*supabase/.test(csp), 'no script may come from the storage host');
+  for (const id of ['avatar-editor', 'avatar-file', 'avatar-save', 'avatar-remove', 'avatar-img', 'avatar-error', 'avatar-status']) assert.ok(html.includes('id="' + id + '"'), id);
+});
+
+test('the picture feature stays switched off in the site settings until the Worker side is deployed', () => {
+  assert.match(read('js/site-config.js'), /avatarUpload:\s*false/);
+});

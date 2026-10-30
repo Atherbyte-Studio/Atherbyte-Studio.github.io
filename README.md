@@ -82,6 +82,31 @@ Worker, repository `atherbyte-api`). Nothing secret is in this repository.
 5. To ask visitors to sign in before a game, set `requiresAccount: true` for that game in `content/site.mjs`.
    Its card then reads "Sign in to play" and brings the visitor back to the game after signing in.
 
+### Profile picture (same picture on the website and in every game)
+One picture per account, set on `/account/` and only by an account with a verified recovery email (the Worker checks this on
+every upload; the page only hides the form). It is stored by the API (see `atherbyte-api`, "Profile pictures") and comes
+back from `GET /v1/me` as `avatar_url`. The page resizes it to 256 x 256 before sending.
+
+Showing it, anywhere on `atherbyte.online` (a game, a leaderboard header, another page):
+
+```html
+<script src="/js/site-config.js"></script>
+<script src="/js/atherbyte-account.js"></script>
+<script>
+  var account = AtherbyteAccount.get();
+  account.refreshAvatar().then(function (url) {      // url is "" when nobody is signed in or there is no picture
+    if (url) { document.getElementById("my-avatar").src = url; }
+  });
+</script>
+```
+
+`account.avatarUrl()` returns the same address instantly from this browser (no request), so it is safe to call often.
+`refreshAvatar()` asks the server at most once an hour. The website's own header already uses it. Only addresses inside the
+project's public `avatars` bucket are ever returned. Other players' pictures (for a leaderboard) will come from the game's
+own API answers, which should include the `avatar_url` of each player.
+
+The feature is **off** until the Worker and database side are deployed (`account.features.avatarUpload` in `js/site-config.js`).
+
 ### What works and what does not yet
 - **Works once the Worker is deployed:** create account, sign in, "who am I", automatic session refresh, sign out
   (which also revokes the session on the server), the recovery warning, the `Sign in` menu link, the `next=` return trip.

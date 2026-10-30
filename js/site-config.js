@@ -41,7 +41,7 @@ window.ATHERBYTE_CONFIG = {
                         Leave "" if the Worker runs with the security check turned off.
       features          Switches for parts that need more server work. Keep them false until that work is deployed.
                           recoveryEmail  adding and verifying a real email
-                          avatarUpload   profile pictures (only ever offered after the email is verified)
+                          avatarUpload   profile pictures (only ever offered after the email is verified; needs the Worker endpoints and migrations/002_avatars in atherbyte-api deployed first)
   */
   account: {
     apiBaseUrl: "https://atherbyte-api.assouliwaseem391.workers.dev",   // temporary: switch to https://api.atherbyte.online once that domain is attached

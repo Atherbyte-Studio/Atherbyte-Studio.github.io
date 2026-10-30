@@ -30,6 +30,13 @@
   "use strict";
 
   var SESSION_KEY = "atherbyte-account-v1";
+  /* The signed-in account's profile picture address, kept next to the session so every page and game on this site can
+     show the same picture without asking the server each time. Only an address inside the project's public
+     "avatars" bucket is ever kept. Removed on sign out. */
+  var AVATAR_KEY = "atherbyte-avatar-v1";
+  var AVATAR_RE = /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/[0-9a-f-]{36}\/avatar(\?v=[0-9]+)?$/;
+  var AVATAR_MAX_BYTES = 200 * 1024;
+  var AVATAR_STALE_MS = 60 * 60 * 1000;   // pages re-read the picture from the server at most once an hour
   var USERNAME_RE = /^[A-Za-z0-9_]{3,20}$/;
   var REFRESH_MARGIN_S = 30;       // refresh when fewer than 30 seconds are left
   var TIMEOUT_MS = 10000;
@@ -66,6 +73,11 @@
     invalid_json: "Something went wrong. Please reload the page and try again.",
     body_too_large: "That input is too long.",
     profile_not_found: "Your profile could not be found. Please sign in again.",
+    email_not_verified: "Profile pictures unlock after you verify a recovery email.",
+    image_too_large: "That picture is too big. Please choose a smaller one.",
+    invalid_image: "That file is not a picture we can use. Please choose a PNG, JPEG or WebP image.",
+    invalid_image_size: "That picture is too small or too large. Please choose another one.",
+    image_unusable: "Your browser could not read that picture. Please choose a PNG, JPEG or WebP image.",
     timeout: "The account service took too long to answer. Please try again.",
     network: "Could not reach the account service. Check your connection and try again.",
     bad_response: "The account service sent something unexpected. Please try again."
@@ -158,7 +170,25 @@
     }
     function clearSession() {
       memory = null;
-      try { if (storage) { storage.removeItem(SESSION_KEY); } } catch (e) { /* ignore */ }
+      try { if (storage) { storage.removeItem(SESSION_KEY); storage.removeItem(AVATAR_KEY); } } catch (e) { /* ignore */ }
+      notify();
+    }
+
+    /* The picture address cache (see AVATAR_KEY). It belongs to one account: another account's picture is never shown. */
+    function readAvatarCache() {
+      var s = readSession();
+      var raw = null;
+      try { raw = storage ? storage.getItem(AVATAR_KEY) : null; } catch (e) { raw = null; }
+      var c = null;
+      if (raw) { try { c = JSON.parse(raw); } catch (e) { c = null; } }
+      if (!s || !c || typeof c !== "object" || c.id !== s.user.id) { return null; }
+      return { url: typeof c.url === "string" && AVATAR_RE.test(c.url) ? c.url : null, at: Number(c.at) || 0 };
+    }
+    function writeAvatarCache(url) {
+      var s = readSession();
+      if (!s) { return; }
+      var safe = typeof url === "string" && AVATAR_RE.test(url) ? url : null;
+      try { if (storage) { storage.setItem(AVATAR_KEY, JSON.stringify({ id: s.user.id, url: safe, at: now() })); } } catch (e) { /* ignore */ }
       notify();
     }
     if (root.addEventListener && storage && !o.noStorageEvents) {
@@ -182,9 +212,11 @@
       var timer = setTimeout(function () { if (ctrl) { ctrl.abort(); } }, TIMEOUT_MS);
       var headers = { Accept: "application/json" };
       if (init.body !== undefined) { headers["Content-Type"] = "application/json"; }
+      if (init.rawBody !== undefined) { headers["Content-Type"] = init.contentType; }   // a picture, sent as it is
       if (init.token) { headers.Authorization = "Bearer " + init.token; }
       var opts = { method: init.method || "GET", headers: headers, credentials: "omit", cache: "no-store" };
       if (init.body !== undefined) { opts.body = JSON.stringify(init.body); }
+      if (init.rawBody !== undefined) { opts.body = init.rawBody; }
       if (ctrl) { opts.signal = ctrl.signal; }
       return Promise.resolve().then(function () { return fetchImpl(base + path, opts); }).then(function (res) {
         clearTimeout(timer);
@@ -268,7 +300,7 @@
         function once() {
           var s = readSession();
           if (!s) { return Promise.resolve({ ok: false, status: 401, code: "unauthorized" }); }
-          return request(path, { method: init.method, body: init.body, token: s.access_token });
+          return request(path, { method: init.method, body: init.body, rawBody: init.rawBody, contentType: init.contentType, token: s.access_token });
         }
         var s0 = readSession();
         var pre = s0 && s0.expires_at - Math.floor(now() / 1000) <= REFRESH_MARGIN_S ? client.refresh() : Promise.resolve(true);
@@ -285,7 +317,47 @@
       me: function () {
         return client.authed("/v1/me").then(function (r) {
           if (!r.ok) { return fail(r.code, { status: r.status }); }
+          writeAvatarCache(r.data && r.data.avatar_url);
           return { ok: true, profile: r.data };
+        });
+      },
+
+      /* ---- profile picture (the same one on the website and in every game) ---- */
+
+      /* The address of the signed-in account's picture, or "" when there is none (or nobody is signed in).
+         Read from this browser, so it costs nothing: use it as the src of an <img>. Call refreshAvatar() first if you
+         want to be sure it is current. */
+      avatarUrl: function () { var c = readAvatarCache(); return c && c.url ? c.url : ""; },
+
+      /* Re-reads the picture from the server when this browser has not done so for an hour (or never). Always resolves
+         to the current address, "" when there is none. Never throws, and a network problem keeps what is shown. */
+      refreshAvatar: function (force) {
+        var c = readAvatarCache();
+        if (!readSession()) { return Promise.resolve(""); }
+        if (!force && c && now() - c.at < AVATAR_STALE_MS) { return Promise.resolve(c.url || ""); }
+        return client.me().then(function () { return client.avatarUrl(); }, function () { return client.avatarUrl(); });
+      },
+
+      /* Sends a picture (a Blob of image/png, image/jpeg or image/webp, 200 KB at most). The server only accepts it from
+         an account with a verified recovery email, whatever this page shows. */
+      uploadAvatar: function (blob) {
+        if (!blob || typeof blob.size !== "number" || blob.size < 1) { return Promise.resolve(fail("invalid_image")); }
+        if (blob.size > AVATAR_MAX_BYTES) { return Promise.resolve(fail("image_too_large")); }
+        if (["image/png", "image/jpeg", "image/webp"].indexOf(blob.type) < 0) { return Promise.resolve(fail("invalid_image")); }
+        return client.authed("/v1/me/avatar", { method: "POST", rawBody: blob, contentType: blob.type }).then(function (r) {
+          if (!r.ok) { return fail(r.code, { status: r.status }); }
+          var url = r.data && r.data.avatar_url;
+          if (typeof url !== "string" || !AVATAR_RE.test(url)) { return fail("bad_response"); }
+          writeAvatarCache(url);
+          return { ok: true, avatarUrl: url };
+        });
+      },
+
+      removeAvatar: function () {
+        return client.authed("/v1/me/avatar/remove", { method: "POST" }).then(function (r) {
+          if (!r.ok) { return fail(r.code, { status: r.status }); }
+          writeAvatarCache(null);
+          return { ok: true, avatarUrl: "" };
         });
       },
 
@@ -370,6 +442,7 @@
   return {
     SESSION_KEY: SESSION_KEY, MESSAGES: MESSAGES, messageFor: messageFor,
     validateUsername: validateUsername, validatePassword: validatePassword, validateEmail: validateEmail, maskEmail: maskEmail,
-    safeNext: safeNext, normalizeBase: normalizeBase, create: create, get: get
+    safeNext: safeNext, normalizeBase: normalizeBase, create: create, get: get,
+    isAvatarUrl: function (v) { return typeof v === "string" && AVATAR_RE.test(v); }, AVATAR_MAX_BYTES: AVATAR_MAX_BYTES, AVATAR_KEY: AVATAR_KEY
   };
 });

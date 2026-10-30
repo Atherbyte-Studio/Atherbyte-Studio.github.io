@@ -1074,3 +1074,6 @@ a:hover { color: #fff; }
   .game-hero-grid { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 56px; }
   .howto-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
 }
+
+/* The account's profile picture in the header button (set by js/main.js). */
+.nav-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }

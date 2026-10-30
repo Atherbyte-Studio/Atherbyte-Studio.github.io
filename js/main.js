@@ -56,9 +56,28 @@
     if (!account || !account.isConfigured()) { return; }
     var label = $("[data-account-link] span");
     if (!label) { return; }
-    function update() { label.textContent = account.hasSession() ? account.username() : "Sign in"; }
+    var link = $("[data-account-link]");
+    var icon = $("svg", link);
+    var photo = null;
+    function update() {
+      label.textContent = account.hasSession() ? account.username() : "Sign in";
+      // The account's profile picture (the same one every game shows), in place of the generic person icon.
+      var url = account.avatarUrl ? account.avatarUrl() : "";
+      if (url && !photo) {
+        photo = make("img", "nav-avatar");
+        photo.alt = ""; photo.width = 24; photo.height = 24;
+        photo.addEventListener("error", function () { photo.hidden = true; if (icon) { icon.style.display = ""; } });
+        link.insertBefore(photo, label);
+      }
+      if (photo) {
+        photo.hidden = !url;
+        if (url && photo.getAttribute("src") !== url) { photo.src = url; }
+        if (icon) { icon.style.display = url ? "none" : ""; }
+      }
+    }
     update();
     if (account.onChange) { account.onChange(update); }   // signing in or out on the Account page updates the button at once
+    if (account.hasSession() && account.refreshAvatar) { account.refreshAvatar(false).then(update); }   // at most one check an hour
   }
 
   /* ---------- 3. Copy the contact email ---------- */
