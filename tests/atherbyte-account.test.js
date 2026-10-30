@@ -494,6 +494,6 @@ test('the account page can show the picture: its policy allows the avatars host,
   for (const id of ['avatar-editor', 'avatar-file', 'avatar-save', 'avatar-remove', 'avatar-img', 'avatar-error', 'avatar-status']) assert.ok(html.includes('id="' + id + '"'), id);
 });
 
-test('the picture feature stays switched off in the site settings until the Worker side is deployed', () => {
-  assert.match(read('js/site-config.js'), /avatarUpload:\s*false/);
+test('the picture feature is switched on in the site settings (the Worker side is deployed)', () => {
+  assert.match(read('js/site-config.js'), /avatarUpload:\s*true/);
 });

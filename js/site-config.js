@@ -48,7 +48,7 @@ window.ATHERBYTE_CONFIG = {
     turnstileSiteKey: "0x4AAAAAAFoYIBy3fYFZeZxm",   // PUBLIC site key (safe in Git). The secret key lives only in the Worker.
     features: {
       recoveryEmail: true,
-      avatarUpload: false
+      avatarUpload: true
     }
   },
 
