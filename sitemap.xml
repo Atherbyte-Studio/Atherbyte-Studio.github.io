@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://atherbyte.online/</loc>
+    <loc>https://atherbyte.online/about/</loc>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/contact/</loc>
   </url>
   <url>
     <loc>https://atherbyte.online/games/</loc>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/</loc>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/portfolio/</loc>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/products/</loc>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/saas/</loc>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/services/</loc>
   </url>
   <url>
     <loc>https://atherbyte.online/games/grid-snake/</loc>

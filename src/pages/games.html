@@ -1,0 +1,46 @@
+<!--meta {"path":"/games/","nav":"games","title":"Games | Play Free Browser Games by Atherbyte Studio","description":"Play Atherbyte Studio's free browser games: Grid Snake and Stop the Timer, with the competitive brain game Atherbyte Mind Clash in development.","crumbs":[["Home","/"],["Games"]]} -->
+<section class="page-hero" aria-labelledby="page-title">
+  <div class="container">
+    {{crumbs}}
+    <p class="eyebrow">Games</p>
+    <h1 class="section-title" id="page-title">Browser games, made by us.</h1>
+    <p class="section-lead">Free to play in your browser, with nothing to download or install. Two are live now, and a third is in development.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="available-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title section-title-sm" id="available-title">Play now</h2>
+    </div>
+    {{grid kind=game group=product level=3}}
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="dev-title">
+  <div class="container split">
+    <div class="reveal">
+      <p class="eyebrow">Coming next</p>
+      <h2 class="section-title" id="dev-title">Atherbyte Mind Clash</h2>
+      <p>{{badge status=in-development}}</p>
+      <p class="section-lead">A competitive brain game for two. It is still being built, so there is nothing to play yet. This is what we are working towards:</p>
+      {{planned id=mind-clash}}
+    </div>
+    <div>
+      {{grid ids=mind-clash variant=feature level=3}}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2 class="section-title" id="cta-title">Want a game of your own?</h2>
+      <p class="section-lead">We build browser games for ourselves, and for other people. If you have an idea, tell us about it.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary has-arrow" href="/contact/#build">Discuss a Game Project</a>
+        <a class="btn btn-secondary" href="/saas/">Explore Software</a>
+      </div>
+    </div>
+  </div>
+</section>

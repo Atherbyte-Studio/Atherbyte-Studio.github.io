@@ -1,0 +1,42 @@
+<!--meta {"path":"/contact/","nav":"contact","title":"Contact | Atherbyte Studio","description":"Contact Atherbyte Studio about our products, or to discuss a website, web application or custom software project.","crumbs":[["Home","/"],["Contact"]]} -->
+<section class="page-hero" aria-labelledby="page-title">
+  <div class="container">
+    {{crumbs}}
+    <p class="eyebrow">Contact</p>
+    <h1 class="section-title" id="page-title">Get in touch.</h1>
+    <p class="section-lead">Choose the option that fits. Both go to the same inbox, and the subject line helps us reply faster.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="paths-title">
+  <div class="container">
+    <h2 class="visually-hidden" id="paths-title">Ways to get in touch</h2>
+    <div class="path-grid">
+      <article class="path path-business reveal" id="build" aria-labelledby="build-title">
+        <p class="path-label">Business enquiries</p>
+        <h3 id="build-title">Build a project with us</h3>
+        <p>For a website, a web application or custom software. A few lines is enough to start. It helps to mention:</p>
+        <ul class="check-list">
+          <li>What you want to build, and who it is for</li>
+          <li>Any deadline you have in mind</li>
+          <li>Links to anything similar that you like</li>
+        </ul>
+        <div id="contact-fallback">{{email subject="Project inquiry for Atherbyte Studio" label="Email about a project"}}</div>
+        <div id="contact-email-slot"></div>
+      </article>
+
+      <article class="path reveal" id="play" aria-labelledby="play-title">
+        <p class="path-label">Players and product users</p>
+        <h3 id="play-title">Questions about our products</h3>
+        <p>Found a bug, have an idea for a game, or want to know when a product launches? Write to us, or follow along on social media.</p>
+        <div class="contact-actions">
+          <a class="btn btn-primary" href="{{mailto subject="Question about an Atherbyte product"}}">Email about a product</a>
+          <a class="btn btn-secondary" href="/games/">Play our games</a>
+        </div>
+        <p class="social-label">Find us online</p>
+        {{social}}
+      </article>
+    </div>
+    <p class="legend reveal">We reply by email. There is no contact form or phone line at the moment.</p>
+  </div>
+</section>
