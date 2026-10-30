@@ -223,8 +223,9 @@ const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 test('Account is reachable from the main navigation and footer of the home, games and account pages', () => {
   for (const f of ['index.html', 'games/index.html', 'account/index.html']) {
     const html = read(f);
-    const hits = (html.match(/<li><a href="\/account\/"[^>]*>Account<\/a><\/li>/g) || []).length;
-    assert.ok(hits >= 2, f + ' needs an Account link in both the header nav and the footer (found ' + hits + ')');
+    const header = (html.match(/<a class="nav-account" href="\/account\/"[^>]*data-account-link>/g) || []).length;
+    const footer = (html.match(/<li><a href="\/account\/">Account<\/a><\/li>/g) || []).length;
+    assert.ok(header === 1 && footer === 1, f + ' needs an Account link in both the header and the footer (found ' + header + ' and ' + footer + ')');
   }
 });
 

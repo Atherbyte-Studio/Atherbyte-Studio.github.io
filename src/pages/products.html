@@ -1,0 +1,45 @@
+<!--meta {"path":"/products/","nav":"products","title":"Products | Atherbyte Studio","description":"Browse Atherbyte Studio's products: browser games you can play now, and software products and projects in development.","crumbs":[["Home","/"],["Products"]]} -->
+<section class="page-hero" aria-labelledby="page-title">
+  <div class="container">
+    {{crumbs}}
+    <p class="eyebrow">Products</p>
+    <h1 class="section-title" id="page-title">Everything we build and own.</h1>
+    <p class="section-lead">Browser games you can play today, and software products and projects that are on their way. Every item shows its real status.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="games-title">
+  <div class="container">
+    <div class="subsection-head reveal">
+      <h2 class="section-title section-title-sm" id="games-title">Games</h2>
+      <a class="link-arrow" href="/games/">Games page</a>
+    </div>
+    {{grid kind=game level=3}}
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="saas-title">
+  <div class="container">
+    <div class="subsection-head reveal">
+      <h2 class="section-title section-title-sm" id="saas-title">SaaS &amp; Software Products</h2>
+      <a class="link-arrow" href="/saas/">SaaS &amp; Tools page</a>
+    </div>
+    {{grid kind=saas variant=feature level=3}}
+    <p class="legend reveal">No SaaS product is live yet. Items here are projects in progress.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="status-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Status labels</p>
+      <h2 class="section-title section-title-sm" id="status-title">What the labels mean.</h2>
+    </div>
+    <dl class="status-legend reveal">
+      <div><dt>{{badge status=available}}</dt><dd>Live. You can open and use it today.</dd></div>
+      <div><dt>{{badge status=in-development}}</dt><dd>Being built. Announced, but not playable or usable yet.</dd></div>
+      <div><dt>{{badge status=in-progress}}</dt><dd>A project under active work. Not a finished product.</dd></div>
+      <div><dt>{{badge status=coming-soon}}</dt><dd>Planned. Work has not started in earnest.</dd></div>
+    </dl>
+  </div>
+</section>

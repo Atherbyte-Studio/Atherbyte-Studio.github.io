@@ -1,0 +1,53 @@
+<!--meta {"path":"/portfolio/","nav":"portfolio","title":"Portfolio | Atherbyte Studio","description":"Atherbyte Studio's portfolio: released products, products in development, and projects in progress, each with its real status.","crumbs":[["Home","/"],["Portfolio"]]} -->
+<section class="page-hero" aria-labelledby="page-title">
+  <div class="container">
+    {{crumbs}}
+    <p class="eyebrow">Portfolio</p>
+    <h1 class="section-title" id="page-title">What we have built, and what we are building.</h1>
+    <p class="section-lead">Released work and unfinished work are kept apart, and every item carries its real status.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="avail-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Released</p>
+      <h2 class="section-title section-title-sm" id="avail-title">Available products</h2>
+    </div>
+    {{grid group=product level=3}}
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="dev-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Being built</p>
+      <h2 class="section-title section-title-sm" id="dev-title">Products in development</h2>
+    </div>
+    {{grid group=development variant=feature level=3}}
+  </div>
+</section>
+
+<section class="section" aria-labelledby="client-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Projects &amp; demonstrations</p>
+      <h2 class="section-title section-title-sm" id="client-title">Client projects and demos</h2>
+      <p class="section-lead">We have not published any completed client projects yet. The project below is an Atherbyte concept in progress, not a finished or paid engagement.</p>
+    </div>
+    {{grid group=project variant=feature level=3}}
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2 class="section-title" id="cta-title">Your project could be next.</h2>
+      <p class="section-lead">If you want a website, a web app or custom software, start with a short email.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary has-arrow" href="/contact/#build">Let's Build Your Project</a>
+        <a class="btn btn-secondary" href="/services/">Development Services</a>
+      </div>
+    </div>
+  </div>
+</section>

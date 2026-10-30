@@ -1,6 +1,6 @@
 # Atherbyte Studio website
 
-The official website of Atherbyte Studio: a static site (plain HTML, CSS and JavaScript) hosted for free on GitHub Pages. There is no build step and no server. What you see in this repository is exactly what gets published.
+The official website of Atherbyte Studio: a static site (plain HTML, CSS and JavaScript) hosted for free on GitHub Pages. There is no server and no deployment build: what you see in this repository is exactly what gets published. Pages are generated from `content/` and `src/` by a small helper script (see below), and the generated files are committed.
 
 Live address: `https://atherbyte.online/`
 (the custom domain is connected through the `CNAME` file; the old `atherbyte-studio.github.io` address redirects to it)
@@ -9,66 +9,50 @@ Live address: `https://atherbyte.online/`
 
 ```
 .
-├── index.html            The whole page: header, hero, games, about, services, contact, footer
-├── 404.html              The "page not found" page
-├── favicon.ico           Browser tab icon
-├── robots.txt            Tells search engines they may crawl the site and where the sitemap is
-├── sitemap.xml           List of the pages search engines should know about (add each new game's page here)
-├── CNAME                 Connects the custom domain. Leave it alone
-├── .nojekyll             Empty file. Tells GitHub to publish the files exactly as they are
-├── games/                /games/ (all games) and one info page per game (games/grid-snake/, ...)
-├── css/
-│   └── styles.css        All the styling. Colours and sizes are at the top of the file
-├── js/
-│   ├── site-config.js    YOUR DETAILS: email, testimonials, client projects
-│   ├── games-data.js     YOUR GAMES: the list the game cards are built from
-│   └── main.js           Menu, game cards, fade-in effects (you rarely need to touch this)
-└── assets/
-    └── images/
-        ├── atherbyte-logo-original.png   The logo exactly as supplied (not used by the page)
-        ├── atherbyte-logo-lockup.webp    Web-sized copy of the full logo (hero)
-        ├── atherbyte-mark.webp           The "A" mark (menu bar and footer)
-        ├── og-image.png                  Picture shown when the link is shared
-        ├── favicon.png, apple-touch-icon.png
-        └── games/                        One picture per game
+├── content/site.mjs      ALL SITE CONTENT AS DATA: products, statuses, navigation, services, email, social links
+├── src/pages/*.html      The text of each page (home, products, games, saas, services, portfolio, about, contact)
+├── tools/build.mjs       Writes the finished pages from the two items above (Node 18+, no dependencies)
+├── tools/link-check.mjs  Checks every internal link and anchor in the built pages
+├── tools/og-source.html  Source of the sharing image (assets/images/og-image.png)
+├── index.html, products/, games/, saas/, services/, portfolio/, about/, contact/
+│                         Built pages. Do not edit by hand: change src/ or content/ and run the build
+├── games/<name>/         Hand-written game info pages (header and footer are kept in sync by the build)
+├── account/              Account pages (header and footer kept in sync by the build)
+├── 404.html, favicon.ico, robots.txt, sitemap.xml (written by the build), CNAME, .nojekyll
+├── css/styles.css        All styling. Design tokens (colours, type, spacing, radius, shadows) are at the top
+├── css/account.css       Account pages only
+├── js/main.js            Menu, copy-email button, scroll fade-in, "Sign in to play"
+├── js/site-config.js     Contact email and account service settings
+└── assets/images/        Logo, icons, sharing image, game pictures
 ```
 
 The two games themselves live in their own repositories (`grid-snake` and `Feel-the-time`). This repository only links to them. **Never create folders named `grid-snake` or `Feel-the-time` here**, because that could hide the games.
 
-## Common jobs
+GitHub Pages publishes the committed files exactly as they are. The build script is only a helper for editing: run it after any change in `content/` or `src/`, then commit the result.
 
-You can do all of these on github.com: open the file, click the pencil icon (Edit), change the text, then click **Commit changes**. The live site updates about a minute later.
-
-### Change the contact email
-The address is currently `atherbyte.studio@gmail.com`. To change it, edit it in `js/site-config.js`:
-
-```js
-email: "you@yourdomain.com",
+```bash
+node tools/build.mjs
+node tools/link-check.mjs
 ```
 
-The "Email us" button, the "Copy email address" button and the "Ask about this" links on the service cards are built from that line. The same address is also written in `index.html` (the plain email link in the Contact section that works without JavaScript, the footer "Email" link, and the structured data near the top). Search `index.html` for `atherbyte.studio@` and change those too.
+## Common jobs
 
-### Social links
-Instagram and Facebook are written directly in `index.html`, in two places: the Contact section and the footer (search the file for `instagram`). To change a link, edit its `href` in both places. To add another profile, copy one `<li>...</li>` line in each place and change the address, the label and the icon. Only use real, official profiles. Keep `target="_blank" rel="noopener noreferrer"` so links open in a new tab safely.
+### Add a product (a game, a SaaS product or a project)
+1. Open `content/site.mjs` and copy one block in `PRODUCTS`. Set `kind` (`game` or `saas`), `group` (`product`, `development` or `project`, which decides the Portfolio section) and `status` (`available`, `in-development`, `in-progress` or `coming-soon`).
+2. Only add a `url` when the product is really live. Without a `url` the card shows a status note instead of a button, so nothing unfinished can look playable.
+3. For a picture, use `visual: { type: "image", src, alt }` (a 16:10 WebP in `assets/images/games/`), or one of the designed previews (`mindclash`, `dental`; new ones go in `visual()` in `tools/build.mjs`).
+4. Run `node tools/build.mjs`. Home, Products, Games, SaaS & Tools, Portfolio and the sitemap all update.
+5. For a game that gets its own info page, copy `games/grid-snake/` and edit it (its own `canonical`, texts and images), then add `games/<name>/index.html` to `SYNCED_PAGES` in `content/site.mjs`.
 
-### Add a third game
-1. Add a screenshot of the game to `assets/images/games/` (16:10, 1280 x 800 WebP works well) and, for its page, a second one of the game being played.
-2. In `js/games-data.js`, copy one whole `{ ... }` block, paste it after the last one (keep a comma between blocks) and change the text, the `image`, the `page` (for example `"/games/my-game/"`) and the `url` (use `https://atherbyte.online/<game-folder>/`).
-3. Create the game's page: copy the folder `games/grid-snake/` to `games/my-game/` and edit `games/my-game/index.html`: the title, description, `canonical`, `og:url`, the headings and texts, the images and the two "Play Now" links. Every page must have its **own** `canonical` (its own address, never the home page's). Only describe what the game really does.
-4. In `sitemap.xml`, add the game's studio page and the game itself (copy `<url>` blocks).
-5. In `index.html`, copy one game card into the fallback list (see below) and update the "About the studio" text, which says how many games have been released.
+### Change a status
+Change `status` on the product in `content/site.mjs` and rebuild. Status names and colours live in `STATUSES`.
 
-There is a longer explanation at the top of `games-data.js`. The new card appears on the site with a **Play Now** and a **Details** button. A block that has no `title` or `description` is skipped, so it can never break the other games.
+### Change the contact email or social links
+Edit `SITE` in `content/site.mjs` (email and social links) and `email` in `js/site-config.js`, then rebuild. Use only real, official profiles.
 
-`index.html` also contains a ready-made copy of the game cards (inside `<div class="game-grid" id="game-grid">`). It is a safety net: it is what visitors see if JavaScript does not run, and the script replaces it with the cards from `games-data.js` when it does.
+### Edit page text
+Edit the file in `src/pages/` (for example `src/pages/about.html`) and rebuild.
 
-Each game's own page (in its own repository) should also carry its own `canonical`, Open Graph tags, icons and a link back to `https://atherbyte.online/`.
-
-### Show real testimonials
-Add real customer feedback to `testimonials: [ ... ]` in `js/site-config.js`. The Testimonials section is only added to the page once there is at least one.
-
-### Show client projects
-Add finished client work to `clientProjects: [ ... ]` in `js/site-config.js`. The Portfolio section and its menu link are only added to the page once there is at least one.
 
 ### Change colours
 At the top of `css/styles.css`, the `:root { ... }` block holds the colours. Change a value there and it changes everywhere.
@@ -95,7 +79,7 @@ Worker, repository `atherbyte-api`). Nothing secret is in this repository.
    into the Worker). If the Worker runs without the security check, leave it `""`.
 4. If the API is not on `*.workers.dev` or `api.atherbyte.online`, add its address to `connect-src` in the
    `<meta http-equiv="Content-Security-Policy">` of `account/index.html`.
-5. To ask visitors to sign in before a game, set `requiresAccount: true` for that game in `js/games-data.js`.
+5. To ask visitors to sign in before a game, set `requiresAccount: true` for that game in `content/site.mjs`.
    Its card then reads "Sign in to play" and brings the visitor back to the game after signing in.
 
 ### What works and what does not yet
@@ -124,11 +108,11 @@ GitHub remembers every version, so nothing is ever lost.
 4. Select all the text (Ctrl+A or Cmd+A) and copy it.
 5. Go back to the file, click the pencil icon, select everything, paste, and **Commit changes**.
 
-If a mistake in `js/site-config.js` or `js/games-data.js` breaks something (a missing comma or quotation mark is the usual cause), restore that file the same way.
+If a mistake in `js/site-config.js` or `content/site.mjs` breaks something (a missing comma or quotation mark is the usual cause), restore that file the same way.
 
 ## Web address (SEO)
 
-The site's one official address is `https://atherbyte.online/`. These places in `index.html` must keep using it (never the old `atherbyte-studio.github.io` address): the `canonical` link, `og:url`, `og:image`, `twitter:image` and the structured data. Game links in `js/games-data.js` and `index.html` also use it. The `CNAME` file connects the domain; leave it alone.
+The site's one official address is `https://atherbyte.online/`. These places in every page (set once in `tools/build.mjs`) must keep using it (never the old `atherbyte-studio.github.io` address): the `canonical` link, `og:url`, `og:image`, `twitter:image` and the structured data. Game links in `content/site.mjs` also use it. The `CNAME` file connects the domain; leave it alone.
 
 Each game page is its own page (its own repository), so it should carry its own `canonical` pointing at its own address (for example `https://atherbyte.online/grid-snake/`), never the home page's address.
 
