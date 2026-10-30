@@ -13,6 +13,7 @@
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/assets/images/favicon.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+  <script>document.documentElement.classList.add("js");</script>
   <link rel="stylesheet" href="/css/styles.css">
   <style>
     .not-found { min-height: calc(100vh - var(--header-h)); display: grid; align-items: center; padding-block: 48px;
@@ -30,6 +31,24 @@
         <img src="/assets/images/atherbyte-mark.webp" alt="" width="40" height="40">
         <span class="brand-name">Atherbyte <span>Studio</span></span>
       </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main">
+        <ul class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/products/">Products</a></li>
+          <li><a href="/games/">Games</a></li>
+          <li><a href="/saas/">SaaS &amp; Tools</a></li>
+          <li><a href="/services/">Services</a></li>
+          <li><a href="/portfolio/">Portfolio</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+        <a class="nav-account" href="/account/" data-account-link><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Account</span></a>
+      </nav>
     </div>
   </header>
 
@@ -38,9 +57,12 @@
       <img class="not-found-mark" src="/assets/images/atherbyte-mark.webp" alt="" width="160" height="160">
       <p class="eyebrow">Error 404</p>
       <h1 class="section-title">This page doesn't exist.</h1>
-      <p class="section-lead">The link may be old or mistyped. Head back to the home page to find our games and projects.</p>
+      <p class="section-lead">The link may be old or mistyped. Head back to the home page to find our products and projects.</p>
       <a class="btn btn-primary" href="/">Back to home</a>
     </div>
   </main>
+  <script src="/js/site-config.js"></script>
+  <script src="/js/atherbyte-account.js"></script>
+  <script src="/js/main.js"></script>
 </body>
 </html>
