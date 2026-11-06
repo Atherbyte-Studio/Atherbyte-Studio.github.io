@@ -58,7 +58,7 @@ function badge(status) {
 function visual(p, { eager = false } = {}) {
   const v = p.visual;
   if (v.type === "image") {
-    return `<img src="${v.src}" alt="${esc(v.alt)}" width="640" height="400"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
+    return `<img${v.fit === "contain" ? ' class="fit-contain"' : ""} src="${v.src}" alt="${esc(v.alt)}" width="640" height="400"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
   }
   if (v.type === "mindclash") {
     const clue = '<li><i></i><b></b></li>';
@@ -68,28 +68,6 @@ function visual(p, { eager = false } = {}) {
         <ul class="mind-clues" aria-hidden="true">${clue.repeat(4)}</ul>
         <div class="mind-vs" aria-hidden="true"><span>Player 1</span><em>vs</em><span>Player 2</span></div>
       </div>`;
-  }
-  if (v.type === "queue") {
-    /* One SVG, scaled as a single unit by its viewBox: no container-query units, so nothing can reflow or overlap. */
-    const segs = Array.from({ length: 16 }, (_, i) => `<rect class="qs-${i < 11 ? "done" : i === 11 ? "now" : "wait"}" x="${(64 + i * 10.8).toFixed(1)}" y="287" width="8" height="10" rx="2.5"/>`).join("");
-    const row = (y, n, pos, label, kind) => `<g transform="translate(0 ${y})"><rect class="q-row" x="274" y="0" width="322" height="50" rx="12"/><text class="q-t q-code" x="294" y="32">${n}</text><text class="q-t q-pos" x="362" y="30">${pos}</text><rect class="q-pill-${kind}" x="456" y="12" width="124" height="26" rx="13"/><circle class="q-dot-${kind}" cx="472" cy="25" r="4.5"/><text class="q-t q-pilltxt" x="484" y="30">${label}</text></g>`;
-    return `<svg class="qviz" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Illustration of the Atherbyte Queue interface with demo data for a sample dental clinic: ticket A12 is in service, four patients are waiting (A13 approaching, then A14, A15 and A16), and a bar shows queue progress. It is an illustration, not a screenshot.">
-        <rect class="q-win" x="24" y="16" width="592" height="348" rx="18"/>
-        <g class="q-hdr"><rect class="q-mark" x="44" y="32" width="30" height="30" rx="9"/><text class="q-t q-markt" x="59" y="52" text-anchor="middle">AQ</text>
-          <text class="q-t q-clinic" x="86" y="45">Demo Dental Clinic</text><text class="q-t q-brand" x="86" y="61">Atherbyte Queue</text>
-          <rect class="q-open" x="470" y="38" width="126" height="26" rx="13"/><circle class="q-opendot" cx="487" cy="51" r="4.5"/><text class="q-t q-opentxt" x="499" y="56">Queue open</text></g>
-        <line class="q-sep" x1="24" y1="84" x2="616" y2="84"/>
-        <rect class="q-left" x="44" y="100" width="210" height="244" rx="14"/>
-        <text class="q-t q-lbl" x="149" y="128" text-anchor="middle">NOW SERVING</text>
-        <text class="q-t q-big" x="149" y="196" text-anchor="middle">A12</text>
-        <rect class="q-svc" x="87" y="212" width="124" height="30" rx="15"/><text class="q-t q-svctxt" x="149" y="232" text-anchor="middle">In Service</text>
-        <text class="q-t q-lbl2" x="64" y="276">Queue progress</text><text class="q-t q-lbl2 q-r" x="234" y="276" text-anchor="end">4 waiting</text>
-        ${segs}
-        <text class="q-t q-cap" x="149" y="326" text-anchor="middle">11 done · 1 in service · 4 waiting</text>
-        <text class="q-t q-lbl" x="274" y="116">WAITING</text><text class="q-t q-lbl q-r" x="596" y="116" text-anchor="end">4 patients</text>
-        ${row(126, "A13", "Next", "Approaching", "warn")}${row(184, "A14", "2nd", "Waiting", "wait")}${row(242, "A15", "3rd", "Waiting", "wait")}${row(300, "A16", "4th", "Waiting", "wait")}
-        <text class="q-t q-demo" x="320" y="388" text-anchor="middle">Illustration · demo data</text>
-      </svg>`;
   }
   throw new Error(`Unknown visual type "${v.type}"`);
 }
