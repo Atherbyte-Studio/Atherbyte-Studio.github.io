@@ -40,7 +40,7 @@ node tools/link-check.mjs
 ### Add a product (a game, a SaaS product or a project)
 1. Open `content/site.mjs` and copy one block in `PRODUCTS`. Set `kind` (`game` or `saas`), `group` (`product`, `development` or `project`, which decides the Portfolio section) and `status` (`available`, `in-development`, `in-progress` or `coming-soon`).
 2. Only add a `url` when the product is really live. Without a `url` the card shows a status note instead of a button, so nothing unfinished can look playable.
-3. For a picture, use `visual: { type: "image", src, alt }` (a 16:10 WebP in `assets/images/games/`), or one of the designed previews (`mindclash`, `dental`; new ones go in `visual()` in `tools/build.mjs`).
+3. For a picture, use `visual: { type: "image", src, alt }` (a 16:10 WebP in `assets/images/games/`), or one of the designed previews (`mindclash`, `queue`; new ones go in `visual()` in `tools/build.mjs`).
 4. Run `node tools/build.mjs`. Home, Products, Games, SaaS & Tools, Portfolio and the sitemap all update.
 5. For a game that gets its own info page, copy `games/grid-snake/` and edit it (its own `canonical`, texts and images), then add `games/<name>/index.html` to `SYNCED_PAGES` in `content/site.mjs`.
 

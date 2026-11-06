@@ -23,6 +23,7 @@ export const SITE = {
 /* The only statuses a product can have. `tone` picks the badge colour in css/styles.css. */
 export const STATUSES = {
   "available":      { label: "Available",      tone: "ok" },
+  "live":           { label: "Live",           tone: "ok" },
   "in-development": { label: "In Development", tone: "accent" },
   "in-progress":    { label: "In Progress",    tone: "warm" },
   "coming-soon":    { label: "Coming Soon",    tone: "muted" }
@@ -47,7 +48,8 @@ export const NAV = [
     group       Portfolio grouping: "product" (released), "development" (announced / building) or "project" (project or demo).
     url         The live product address. Leave it out for anything that is not available: no button is drawn then.
     page        The product's page on this site (optional).
-    visual      { type: "image", src, alt } or { type: "mindclash" | "dental" } (designed previews, drawn in CSS).
+    visual      { type: "image", src, alt } or { type: "mindclash" | "queue" } (designed previews, drawn in CSS).
+    external    true = a separate app: its button opens in a new tab (target=_blank, rel="noopener noreferrer"). Used with status "live".
     requiresAccount  true = signed-out visitors see "Sign in to play" (kept from the earlier games list; works once accounts are set up).
 */
 export const PRODUCTS = [
@@ -115,18 +117,21 @@ export const PRODUCTS = [
     visual: { type: "mindclash" }
   },
   {
-    id: "dental-clinic-website",
+    id: "atherbyte-queue",
     kind: "saas",
-    group: "project",
-    title: "Dental Clinic Website",
-    category: "Website / Digital Solution",
-    status: "in-progress",
+    group: "product",
+    title: "Atherbyte Queue",
+    category: "SaaS / Clinic Management",
+    status: "live",
     summary:
-      "A modern digital website experience designed for a dental clinic, focused on presenting services, improving the patient experience, and making clinic information easily accessible.",
+      "A smart queue management system for clinics. It helps reception staff organise patients and manage turns, and lets patients join the queue remotely and follow their turn.",
     detail:
-      "An Atherbyte project currently under development. The preview shown is a design concept, not a live clinic website. Online appointments and payments are not part of it today.",
-    tags: ["Website", "UI/UX", "Healthcare"],
-    visual: { type: "dental" }
+      "Atherbyte Queue is a separate application with its own sign-in. It opens on its own address, queue.atherbyte.online.",
+    tags: ["Clinic queues", "Remote join", "Turn tracking"],
+    url: "https://queue.atherbyte.online",
+    external: true,
+    cta: "Visit Product",
+    visual: { type: "queue" }
   }
 ];
 
@@ -144,7 +149,7 @@ export const CATEGORIES = [
     kind: "saas",
     title: "SaaS & Software Products",
     href: "/saas/",
-    blurb: "Software products and tools, including the projects we are building right now.",
+    blurb: "Software products and tools, starting with Atherbyte Queue.",
     cta: "See software projects"
   }
 ];
