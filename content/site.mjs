@@ -121,13 +121,14 @@ export const PRODUCTS = [
     kind: "saas",
     group: "product",
     title: "Atherbyte Queue",
-    category: "SaaS / Clinic Management",
+    category: "SaaS / Dental Clinics",
+    subtitle: "Dental Clinic Queue Management",
     status: "live",
     summary:
-      "A smart queue management system for clinics. It helps reception staff organise patients and manage turns, and lets patients join the queue remotely and follow their turn.",
+      "Smart queue management for dental clinics. Manage patient turns at reception, let patients join remotely, and follow queue progress in real time.",
     detail:
-      "Atherbyte Queue is a separate application with its own sign-in. It opens on its own address, queue.atherbyte.online.",
-    tags: ["Clinic queues", "Remote join", "Turn tracking"],
+      "Atherbyte Queue is a separate application for dental clinics, with its own sign-in. It opens on its own address, queue.atherbyte.online.",
+    tags: ["Dental clinics", "Remote join", "Queue progress"],
     url: "https://queue.atherbyte.online",
     external: true,
     cta: "Visit Product",
