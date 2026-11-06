@@ -48,7 +48,7 @@ export const NAV = [
     group       Portfolio grouping: "product" (released), "development" (announced / building) or "project" (project or demo).
     url         The live product address. Leave it out for anything that is not available: no button is drawn then.
     page        The product's page on this site (optional).
-    visual      { type: "image", src, alt } or { type: "mindclash" | "queue" } (designed previews, drawn in CSS).
+    visual      { type: "image", src, alt } or { type: "mindclash" } (a designed preview, drawn in CSS). An image may add fit: "contain" to show the whole picture.
     external    true = a separate app: its button opens in a new tab (target=_blank, rel="noopener noreferrer"). Used with status "live".
     requiresAccount  true = signed-out visitors see "Sign in to play" (kept from the earlier games list; works once accounts are set up).
 */
@@ -132,7 +132,12 @@ export const PRODUCTS = [
     url: "https://queue.atherbyte.online",
     external: true,
     cta: "Visit Product",
-    visual: { type: "queue" }
+    visual: {
+      type: "image",
+      src: "/assets/images/products/atherbyte-queue.png",
+      fit: "contain",
+      alt: "Illustrative preview of a dental clinic queue management dashboard with demo data: ticket A12 in service and tickets A13 to A16 waiting. It is not a screenshot of the actual system."
+    }
   }
 ];
 
