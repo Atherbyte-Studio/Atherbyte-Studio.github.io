@@ -69,16 +69,17 @@ function visual(p, { eager = false } = {}) {
         <div class="mind-vs" aria-hidden="true"><span>Player 1</span><em>vs</em><span>Player 2</span></div>
       </div>`;
   }
-  if (v.type === "dental") {
-    return `<div class="viz viz-dental" role="img" aria-label="Design concept for a dental clinic website: a navigation bar, a headline area and three service tiles. This is a project preview, not a live clinic website.">
-        <div class="viz-tag">Project preview</div>
-        <div class="dental-win" aria-hidden="true">
-          <div class="dental-bar"><i></i><i></i><i></i></div>
-          <div class="dental-page">
-            <div class="dental-nav"><span class="dental-logo"></span><span>Your Clinic</span><b></b><b></b><b></b></div>
-            <div class="dental-hero"><div><u></u><u></u><s></s></div><div class="dental-shape"></div></div>
-            <div class="dental-tiles"><i></i><i></i><i></i></div>
+  if (v.type === "queue") {
+    const row = (code, state, label) => `<li class="q-row q-${state}"><b>${code}</b><span><i aria-hidden="true"></i>${label}</span></li>`;
+    return `<div class="viz viz-queue" role="img" aria-label="Simplified illustration of Atherbyte Queue: a patient ticket numbered A07 beside a short queue list showing tickets as in service, called and waiting. It is an illustration, not a screenshot.">
+        <div class="viz-tag">Product preview</div>
+        <div class="q-wrap" aria-hidden="true">
+          <div class="q-ticket">
+            <div class="q-brand"><span>AQ</span>Atherbyte Queue</div>
+            <div class="q-num">A07</div>
+            <div class="q-eta">Your turn is approaching</div>
           </div>
+          <ul class="q-list">${row("A05", "serving", "In service")}${row("A06", "called", "Called")}${row("A07", "waiting", "Waiting")}</ul>
         </div>
       </div>`;
   }
@@ -90,6 +91,11 @@ function actions(p) {
   if (p.status === "available" && p.url) {
     out.push(
       `<a class="btn btn-primary has-arrow" href="${p.url}" data-play${p.requiresAccount ? ' data-requires-account="true"' : ""}>${p.cta || "Open"}<span class="visually-hidden"> ${esc(p.title)}</span></a>`
+    );
+  } else if (p.status === "live" && p.url) {
+    const ext = p.external ? ' target="_blank" rel="noopener noreferrer"' : "";
+    out.push(
+      `<a class="btn btn-primary has-arrow" href="${p.url}"${ext}>${p.cta || "Open"}<span class="visually-hidden"> ${esc(p.title)}${p.external ? " (opens in a new tab)" : ""}</span></a>`
     );
   }
   if (p.page) {

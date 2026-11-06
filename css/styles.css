@@ -734,39 +734,30 @@ a:hover { color: #fff; }
 .mind-vs { display: flex; align-items: center; gap: 3cqw; font: 600 max(8px, 2.6cqw)/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 .mind-vs em { color: var(--accent-soft); font-style: normal; }
 
-/* Dental clinic website: a generic website concept inside a browser frame */
-.viz-dental {
+/* Atherbyte Queue: a simplified illustration (not a screenshot): a ticket number beside a short queue list */
+.viz-queue {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding: 11% 7% 0;
   background:
-    radial-gradient(70% 80% at 30% 20%, rgba(106, 59, 242, 0.3), transparent 70%),
+    radial-gradient(70% 80% at 25% 15%, rgba(106, 59, 242, 0.3), transparent 70%),
     linear-gradient(160deg, #14121E, #0B0B12);
 }
-.dental-win {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #F4F2FA;
-  border-radius: 2cqw 2cqw 0 0;
-  box-shadow: 0 -2cqh 6cqh rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12);
-}
-.dental-bar { display: flex; gap: 1.4cqw; align-items: center; height: 7cqh; padding: 0 2.5cqw; background: #E3DFF0; }
-.dental-bar i { width: 1.8cqw; height: 1.8cqw; border-radius: 50%; background: #B9B2D0; }
-.dental-page { display: grid; gap: 4cqh; padding: 3cqh 4cqw; color: #2A2640; }
-.dental-nav { display: flex; align-items: center; gap: 2.5cqw; font: 700 max(8px, 2.7cqw)/1 var(--font); }
-.dental-logo { width: 4cqw; height: 4cqw; border-radius: 1.2cqw; background: linear-gradient(135deg, #8F6BFF, #5B3BE0); }
-.dental-nav b { margin-left: auto; width: 6cqw; height: 1cqw; border-radius: 1cqw; background: #C9C3DD; }
-.dental-nav b ~ b { margin-left: 0; }
-.dental-nav span:nth-child(2) { margin-right: auto; }
-.dental-hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3cqw; align-items: center; }
-.dental-hero u { display: block; height: 3cqw; margin-bottom: 1.6cqw; border-radius: 1cqw; background: #2A2640; text-decoration: none; width: 90%; }
-.dental-hero u + u { width: 65%; }
-.dental-hero s { display: block; width: 28%; height: 3.4cqw; margin-top: 3cqw; border-radius: 1.4cqw; background: #7B4DFF; text-decoration: none; }
-.dental-shape { aspect-ratio: 1.8; border-radius: 3cqw; background: linear-gradient(135deg, #D9CFFF, #A98CFF); }
-.dental-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; }
-.dental-tiles i { height: 11cqh; border-radius: 1.6cqw; background: #fff; box-shadow: 0 0 0 1px #E1DCEF; }
+.q-wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 4cqw; width: 82cqw; align-items: center; margin-top: 6cqh; }
+.q-ticket { padding: 5cqh 3cqw; text-align: center; background: #F4F8F8; color: #10302F; border-radius: 3cqw; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 3cqh 8cqh rgba(0, 0, 0, 0.5); }
+.q-brand { display: flex; align-items: center; justify-content: center; gap: 1.6cqw; font: 700 max(8px, 2.6cqw)/1 var(--font); }
+.q-brand span { display: grid; place-items: center; width: 5.4cqw; height: 5.4cqw; border-radius: 1.6cqw; background: #0E7C7B; color: #fff; font-size: max(7px, 2.2cqw); }
+.q-num { margin: 4cqh 0 2cqh; font: 700 max(22px, 12cqw)/1 var(--font); letter-spacing: 0.02em; color: #0B6362; }
+.q-eta { font: 500 max(8px, 2.5cqw)/1.2 var(--font); color: #4C6968; }
+.q-list { display: grid; gap: 2.4cqh; margin: 0; padding: 0; list-style: none; }
+.q-row { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; padding: 2.6cqh 2.6cqw; border-radius: 2cqw; background: rgba(255, 255, 255, 0.06); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.q-row b { font: 700 max(10px, 4cqw)/1 var(--mono); color: #fff; }
+.q-row span { display: inline-flex; align-items: center; gap: 1.2cqw; font: 600 max(8px, 2.4cqw)/1 var(--font); color: var(--muted); white-space: nowrap; }
+.q-row i { width: 2cqw; height: 2cqw; border-radius: 50%; background: var(--muted); }
+.q-serving i { background: var(--ok); }
+.q-called i { background: var(--warm); }
+.q-waiting i { background: var(--accent-soft); }
+.q-waiting { box-shadow: 0 0 0 1px var(--accent-soft); }
 
 
 /* ---------- 10. Category panels, paths, service list, pillars, CTA band ---------- */
