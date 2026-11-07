@@ -12,7 +12,7 @@ export default {
     tagline: "ألعاب وبرمجيات كخدمة وبرمجيات مخصصة. نصنعها بعناية.",
     onlineHeading: "تواصل معنا"
   },
-  nav: { products: "المنتجات", services: "الخدمات", about: "من نحن", contact: "تواصل", account: "الحساب", signIn: "تسجيل الدخول" },
+  nav: { products: "المنتجات", services: "الخدمات", about: "من نحن", contact: "تواصل", privacy: "سياسة الخصوصية", account: "الحساب", signIn: "تسجيل الدخول" },
   footer: {
     blurb: "شركة مستقلة للمنتجات الرقمية. نبني الألعاب ومنتجات البرمجيات كخدمة والبرمجيات المخصصة.",
     products: "المنتجات", studio: "الاستوديو", legal: "قانوني",

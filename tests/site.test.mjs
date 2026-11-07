@@ -104,3 +104,31 @@ test("Arabic account pages exist, are RTL, noindex, point at /ar/ routes and loa
   }
   assert.ok(readFileSync("account/index.html", "utf8").includes('data-alt="/ar/account/"'));
 });
+
+import { createHash } from "node:crypto";
+
+test("every page references its CSS and JS with a ?v= content hash that matches the file", () => {
+  const pages = [...PAGES.flatMap((p) => ["", "ar/"].map((pre) => (pre + p.path + "index.html").replace(/^\//, ""))), "404.html", "account/index.html", "account/reset/index.html", "ar/account/index.html", "ar/account/reset/index.html"];
+  const ref = /(?:href|src)="\/((?:css|js)\/[^"?]+)\?v=([0-9a-f]{10})"/g;
+  let seen = 0;
+  for (const f of pages) {
+    const h = readFileSync(f, "utf8");
+    for (const m of h.matchAll(ref)) { seen++; assert.equal(m[2], createHash("sha256").update(readFileSync(m[1])).digest("hex").slice(0, 10), `${f} ${m[1]}`); }
+    assert.doesNotMatch(h, /(?:href|src)="\/(?:css|js)\/[^"?]+\.(?:css|js)"/, `${f} has an unversioned asset`);
+    assert.match(h, /\/css\/styles\.css\?v=/, f);
+    if (!f.includes("404")) assert.match(h, /\/js\/main\.js\?v=/, f);
+  }
+  assert.ok(seen > 100);
+  assert.match(readFileSync("index.html", "utf8"), /\/js\/hero3d\.js\?v=/);
+});
+
+test("the header links to the privacy policy in both languages, and the footer keeps its link", () => {
+  for (const [f, pre, label] of [["index.html", "", en.nav.privacy], ["ar/index.html", "/ar", ar.nav.privacy]]) {
+    const h = readFileSync(f, "utf8");
+    const nav = h.slice(h.indexOf('class="nav-list"'), h.indexOf("</ul>", h.indexOf('class="nav-list"')));
+    assert.ok(nav.includes(`<a href="${pre}/privacy/">${label}</a>`), f);
+    assert.ok(h.slice(h.indexOf("<footer")).includes(`href="${pre}/privacy/"`), f + " footer");
+  }
+  assert.equal(en.nav.privacy, "Privacy Policy");
+  assert.match(readFileSync("privacy/index.html", "utf8"), /aria-current="page">Privacy Policy/);
+});

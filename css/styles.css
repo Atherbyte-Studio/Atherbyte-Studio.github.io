@@ -570,3 +570,7 @@ body::after { inset: 0 0 -320px 0; opacity: 0.5; background-image: radial-gradie
   body::before, body::after { display: none; }
 }
 @media (max-width: 559px) { .layer-ticket { width: 34%; bottom: 27%; padding: 7px 9px; gap: 5px 8px; } }
+
+/* Five nav links plus the language and account buttons: tighten them slightly between 900px and 1060px so the header stays on one row (desktop only; phones use the menu). */
+@media (min-width: 900px) and (max-width: 1060px) { .site-nav { gap: 4px; } .nav-list a { padding-inline: 9px; font-size: 0.88rem; } .nav-list a:not([aria-current])::after, .nav-list a[aria-current]::after { inset-inline: 9px; } .nav-tools { gap: 6px; } }
+@media (min-width: 900px) and (max-width: 960px) { html[lang="ar"] .nav-list a { padding-inline: 6px; font-size: 0.84rem; } html[lang="ar"] .nav-list a:not([aria-current])::after, html[lang="ar"] .nav-list a[aria-current]::after { inset-inline: 6px; } html[lang="ar"] .nav-tools { gap: 4px; } }

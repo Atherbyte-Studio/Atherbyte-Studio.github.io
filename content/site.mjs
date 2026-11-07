@@ -72,7 +72,7 @@ export const PAGES = [
   { id: "portfolio", path: "/portfolio/", nav: "products" },
   { id: "about", path: "/about/", nav: "about" },
   { id: "contact", path: "/contact/", nav: "contact" },
-  { id: "privacy", path: "/privacy/", nav: "" },
+  { id: "privacy", path: "/privacy/", nav: "privacy" },
   { id: "game-grid-snake", path: "/games/grid-snake/", nav: "products", product: "grid-snake" },
   { id: "game-stop-the-timer", path: "/games/stop-the-timer/", nav: "products", product: "stop-the-timer" }
 ];

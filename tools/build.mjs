@@ -7,11 +7,21 @@
   English pages are written at their normal address (/products/), Arabic pages under /ar/ (/ar/products/).
   GitHub Pages publishes the committed files as they are: run this after any change and commit the result.
 */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync as writeRaw, mkdirSync, existsSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SITE, LANGS, PRODUCTS, PAGES, SYNCED_PAGES } from "../content/site.mjs";
 import { ACCOUNT_INDEX, ACCOUNT_RESET } from "../content/account.ar.mjs";
+/* Cache busting: every /css/*.css and /js/*.js reference gets ?v=<first 10 hex of the file's SHA-256>.
+   The address changes exactly when the file's content changes, so a browser or CDN can never pair new HTML with an
+   old stylesheet or script. File names stay as they are because the games load some of these files by name. */
+const ASSET_RE = new RegExp('((?:href|src)="/((?:css|js)/[^"?]+\\.(?:css|js)))(?:\\?v=[0-9a-f]+)?"', "g");
+const hashOf = (p) => createHash("sha256").update(readFileSync(join(ROOT, p))).digest("hex").slice(0, 10);
+const stamp = (html) => html.replace(ASSET_RE, (m, ref, path) => `${ref}?v=${hashOf(path)}"`);
+const unstamp = (html) => html.replace(new RegExp('(\\.(?:css|js))\\?v=[0-9a-f]+"', "g"), '$1"');
+const writeFileSync = (file, data) => writeRaw(file, typeof data === "string" && String(file).endsWith(".html") ? stamp(data) : data);
+
 import en from "../content/copy.en.mjs";
 import ar from "../content/copy.ar.mjs";
 
@@ -149,7 +159,7 @@ function socialList(lang) {
 }
 
 /* ---------- header / footer ---------- */
-const NAV_KEYS = [["products", "/products/"], ["services", "/services/"], ["about", "/about/"], ["contact", "/contact/"]];
+const NAV_KEYS = [["products", "/products/"], ["services", "/services/"], ["about", "/about/"], ["contact", "/contact/"], ["privacy", "/privacy/"]];
 
 function header(lang, current, altHref, { account = false } = {}) {
   const t = COPY[lang], other = lang === "en" ? "ar" : "en";
@@ -698,7 +708,7 @@ function syncPage(rel) {
   const path = "/" + rel.replace("index.html", "");              // /account/ or /account/reset/
   const pairs = rel.includes("reset") ? ACCOUNT_RESET : ACCOUNT_INDEX;
   const isIndex = rel === "account/index.html";
-  let html = readFileSync(file, "utf8").replace(/<html lang="en"[^>]*>/, `<html lang="en" data-alt="/ar${path}">`);
+  let html = unstamp(readFileSync(file, "utf8")).replace(/<html lang="en"[^>]*>/, `<html lang="en" data-alt="/ar${path}">`);
   html = html.replace(HEADER_RE, () => header("en", "", "/ar" + path, { account: isIndex }));
   html = html.replace(FOOTER_RE, () => footer("en"));
   writeFileSync(file, html);

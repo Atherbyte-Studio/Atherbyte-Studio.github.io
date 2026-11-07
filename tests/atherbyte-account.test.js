@@ -253,7 +253,7 @@ test('the account page CSP hash matches its inline script, and every local scrip
     const h = "'sha256-" + crypto.createHash('sha256').update(code, 'utf8').digest('base64') + "'";
     assert.ok(csp.includes(h), 'inline script is blocked by CSP (hash mismatch)');
   }
-  for (const m of html.matchAll(/(?:src|href)="(\/(?:js|css)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(ROOT, m[1])), 'missing file ' + m[1]);
+  for (const m of html.matchAll(/(?:src|href)="(\/(?:js|css)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(ROOT, m[1].split("?")[0])), "missing file " + m[1]);
 });
 
 test('every element id that js/account-page.js looks up exists in account/index.html', () => {
@@ -346,7 +346,7 @@ test('the reset page: files exist, CSP hash matches, API host allowed, no captch
   for (const code of [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1])) {
     assert.ok(csp.includes("'sha256-" + crypto.createHash('sha256').update(code, 'utf8').digest('base64') + "'"), 'inline script blocked by CSP');
   }
-  for (const m of html.matchAll(/(?:src|href)="(\/(?:js|css)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(ROOT, m[1])), 'missing ' + m[1]);
+  for (const m of html.matchAll(/(?:src|href)="(\/(?:js|css)\/[^"]+)"/g)) assert.ok(fs.existsSync(path.join(ROOT, m[1].split("?")[0])), "missing " + m[1]);
   assert.ok(/connect-src[^;]*https:\/\/\*\.workers\.dev/.test(csp) && /connect-src[^;]*https:\/\/api\.atherbyte\.online/.test(csp));
   assert.ok(!csp.includes('challenges.cloudflare.com'), 'the reset page does not use a captcha');
   assert.match(html, /<meta name="referrer" content="no-referrer">/);

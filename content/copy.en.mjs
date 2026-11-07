@@ -12,7 +12,7 @@ export default {
     tagline: "Games, SaaS and custom software. Built with care.",
     onlineHeading: "Online"
   },
-  nav: { products: "Products", services: "Services", about: "About", contact: "Contact", account: "Account", signIn: "Sign in" },
+  nav: { products: "Products", services: "Services", about: "About", contact: "Contact", privacy: "Privacy Policy", account: "Account", signIn: "Sign in" },
   footer: {
     blurb: "An independent digital products company. We build games, SaaS products and custom software.",
     products: "Products", studio: "Studio", legal: "Legal",
