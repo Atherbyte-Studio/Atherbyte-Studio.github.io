@@ -1,34 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://atherbyte.online/about/</loc>
-  </url>
-  <url>
-    <loc>https://atherbyte.online/contact/</loc>
-  </url>
-  <url>
-    <loc>https://atherbyte.online/games/</loc>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://atherbyte.online/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/"/>
   </url>
   <url>
-    <loc>https://atherbyte.online/portfolio/</loc>
+    <loc>https://atherbyte.online/ar/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/"/>
   </url>
   <url>
     <loc>https://atherbyte.online/products/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/products/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/products/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/products/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/products/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/products/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/games/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/games/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/games/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/games/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/games/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/games/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/games/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/games/"/>
   </url>
   <url>
     <loc>https://atherbyte.online/saas/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/saas/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/saas/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/saas/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/saas/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/saas/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/saas/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/saas/"/>
   </url>
   <url>
     <loc>https://atherbyte.online/services/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/services/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/services/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/services/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/services/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/services/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/services/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/services/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/portfolio/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/portfolio/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/portfolio/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/portfolio/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/portfolio/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/about/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/about/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/about/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/about/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/about/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/about/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/about/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/about/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/contact/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/contact/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/contact/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/contact/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/privacy/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/privacy/"/>
   </url>
   <url>
     <loc>https://atherbyte.online/games/grid-snake/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/games/grid-snake/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/games/grid-snake/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/games/grid-snake/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/games/grid-snake/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/games/grid-snake/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/games/grid-snake/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/games/grid-snake/"/>
   </url>
   <url>
     <loc>https://atherbyte.online/games/stop-the-timer/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/games/stop-the-timer/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/games/stop-the-timer/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/games/stop-the-timer/"/>
+  </url>
+  <url>
+    <loc>https://atherbyte.online/ar/games/stop-the-timer/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atherbyte.online/games/stop-the-timer/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://atherbyte.online/ar/games/stop-the-timer/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atherbyte.online/games/stop-the-timer/"/>
   </url>
   <url>
     <loc>https://atherbyte.online/grid-snake/</loc>

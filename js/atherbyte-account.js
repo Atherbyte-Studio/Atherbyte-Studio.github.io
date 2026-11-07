@@ -82,8 +82,14 @@
     network: "Could not reach the account service. Check your connection and try again.",
     bad_response: "The account service sent something unexpected. Please try again."
   };
+  /* Arabic pages tell the API the language, so (once the server is set up for it) emailed links open the Arabic page. */
+  function pageLang(body) {
+    if (root.document && root.document.documentElement && root.document.documentElement.lang === "ar") { body.lang = "ar"; }
+    return body;
+  }
   function messageFor(code) {
-    return MESSAGES[code] || "Something went wrong. Please try again.";
+    var text = MESSAGES[code] || "Something went wrong. Please try again.";
+    return root.AtherbyteI18n ? root.AtherbyteI18n.t(text) : text;   // Arabic pages only: js/account-i18n.js
   }
 
   /* ---------- validation (mirrors the server; the server always checks again) ---------- */
@@ -366,7 +372,7 @@
       setEmail: function (email) {
         var e = validateEmail(email);
         if (!e.ok) { return Promise.resolve(fail(e.code)); }
-        return client.authed("/v1/me/email", { method: "POST", body: { email: e.email } }).then(function (r) {
+        return client.authed("/v1/me/email", { method: "POST", body: pageLang({ email: e.email }) }).then(function (r) {
           if (!r.ok) { return fail(r.code, { status: r.status }); }
           return { ok: true, status: "pending", hint: maskEmail(e.email) };
         });
@@ -376,7 +382,7 @@
       forgot: function (identifier, turnstileToken) {
         var id = typeof identifier === "string" ? identifier.trim() : "";
         if (!id || id.length > 254) { return Promise.resolve(fail("invalid_identifier")); }
-        var body = { identifier: id };
+        var body = pageLang({ identifier: id });
         if (turnstileToken) { body.turnstileToken = turnstileToken; }
         return request("/v1/auth/forgot", { method: "POST", body: body }).then(function (r) {
           return r.ok ? { ok: true } : fail(r.code, { status: r.status });

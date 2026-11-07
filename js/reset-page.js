@@ -9,6 +9,7 @@
 
   var A = window.AtherbyteAccount;
   function $(id) { return document.getElementById(id); }
+  var T = (window.AtherbyteI18n && window.AtherbyteI18n.t) || function (s) { return s; };
   if (!A || !$("reset-form")) { return; }
 
   var client = A.get();
@@ -18,12 +19,12 @@
   function say(kind, text) {
     if (!text) { notice.hidden = true; notice.textContent = ""; return; }
     notice.className = "notice notice-" + kind;
-    notice.textContent = text;
+    notice.textContent = T(text);
     notice.hidden = false;
   }
   function formError(text) {
     var p = views.form.querySelector(".form-error");
-    p.textContent = text || "";
+    p.textContent = T(text) || "";
     p.hidden = !text;
   }
 
@@ -42,7 +43,7 @@
       var input = $(btn.getAttribute("data-toggle-for"));
       var visible = input.type === "password";
       input.type = visible ? "text" : "password";
-      btn.textContent = visible ? "Hide" : "Show";
+      btn.textContent = T(visible ? "Hide" : "Show");
       btn.setAttribute("aria-pressed", String(visible));
     });
   });
@@ -54,7 +55,7 @@
     if (p1 !== p2) { formError("The two passwords are not the same."); $("new-password2").focus(); return; }
     var button = views.form.querySelector('button[type="submit"]'), label = button.querySelector(".btn-label");
     var before = label.textContent;
-    button.disabled = true; label.textContent = "Saving…"; button.setAttribute("aria-busy", "true");
+    button.disabled = true; label.textContent = T("Saving…"); button.setAttribute("aria-busy", "true");
     client.resetPassword(token, p1, username).then(function (r) {
       button.disabled = false; label.textContent = before; button.setAttribute("aria-busy", "false");
       if (r.ok) {
@@ -77,7 +78,7 @@
     client.checkResetToken(token).then(function (r) {
       if (r.ok) {
         username = r.username;
-        $("reset-for").textContent = "Choose a new password for " + username + ".";
+        $("reset-for").textContent = T("Choose a new password for " + username + ".");
         show("form");
         $("new-password").focus();
         return;

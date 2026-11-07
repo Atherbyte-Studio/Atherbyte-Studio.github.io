@@ -10,6 +10,7 @@
   var CFG = (window.ATHERBYTE_CONFIG && window.ATHERBYTE_CONFIG.account) || {};
   var FEATURES = CFG.features || {};
   function $(id) { return document.getElementById(id); }
+  var T = (window.AtherbyteI18n && window.AtherbyteI18n.t) || function (s) { return s; };
   if (!A || !$("view-guest")) { return; }
 
   var client = A.get();
@@ -27,19 +28,19 @@
   function say(kind, text) {
     if (!text) { notice.hidden = true; notice.textContent = ""; return; }
     notice.className = "notice notice-" + kind;
-    notice.textContent = text;
+    notice.textContent = T(text);
     notice.hidden = false;
   }
   function setBusy(button, busy, busyText) {
     var label = button.querySelector(".btn-label");
-    if (busy) { button.dataset.label = label.textContent; label.textContent = busyText; }
+    if (busy) { button.dataset.label = label.textContent; label.textContent = T(busyText); }
     else if (button.dataset.label) { label.textContent = button.dataset.label; }
     button.disabled = busy;
     button.setAttribute("aria-busy", busy ? "true" : "false");
   }
   function formError(form, text) {
     var p = form.querySelector(".form-error");
-    p.textContent = text || "";
+    p.textContent = T(text) || "";
     p.hidden = !text;
   }
 
@@ -69,7 +70,7 @@
       var input = $(btn.getAttribute("data-toggle-for"));
       var show = input.type === "password";
       input.type = show ? "text" : "password";
-      btn.textContent = show ? "Hide" : "Show";
+      btn.textContent = T(show ? "Hide" : "Show");
       btn.setAttribute("aria-pressed", String(show));
     });
   });
@@ -138,7 +139,7 @@
       resetCaptcha("forgot");
       if (!r.ok) { formError(forgotPanel, r.message); return; }
       // The same words for every account, so the page never says whether one exists.
-      done.textContent = "If that account has a verified recovery email, a reset link is on its way. It can take a few minutes, so check your spam folder too. The link works once and only for a short time.";
+      done.textContent = T("If that account has a verified recovery email, a reset link is on its way. It can take a few minutes, so check your spam folder too. The link works once and only for a short time.");
       done.hidden = false;
     });
   });
@@ -204,15 +205,15 @@
     $("email-refresh").hidden = !pending;
     if (pending) { startWatching(); } else { stopWatching(); }
     var state = $("email-state");
-    state.textContent = verified ? "Verified" : (pending ? "Waiting for confirmation" : "Not verified");
+    state.textContent = T(verified ? "Verified" : (pending ? "Waiting for confirmation" : "Not verified"));
     state.className = "badge " + (verified ? "badge-ok" : (pending ? "badge-info" : "badge-warn"));
     $("email-unverified").hidden = verified;
     $("email-verified").hidden = !verified;
     $("email-hint").textContent = verified && hint ? hint : "";
     var note = $("email-pending");
     note.hidden = !pending;
-    note.textContent = pending ? "We sent a confirmation link" + (hint ? " to " + hint : "") + ". Open it to finish. If it has not arrived after a few minutes, check your spam folder or send it again." : "";
-    $("email-form").querySelector(".btn-label").textContent = pending ? "Send the link again" : "Send verification link";
+    note.textContent = pending ? T("We sent a confirmation link" + (hint ? " to " + hint : "") + ". Open it to finish. If it has not arrived after a few minutes, check your spam folder or send it again.") : "";
+    $("email-form").querySelector(".btn-label").textContent = T(pending ? "Send the link again" : "Send verification link");
   }
 
   /* While a confirmation is pending, the page asks the server again: when the visitor comes back to this tab, every
@@ -278,8 +279,8 @@
   var avatarPreviewUrl = "";
   function avatarMessage(kind, text) {
     var err = $("avatar-error"), status = $("avatar-status");
-    err.hidden = kind !== "error" || !text; err.textContent = kind === "error" ? text : "";
-    status.hidden = kind !== "ok" || !text; status.textContent = kind === "ok" ? text : "";
+    err.hidden = kind !== "error" || !text; err.textContent = kind === "error" ? T(text) : "";
+    status.hidden = kind !== "ok" || !text; status.textContent = kind === "ok" ? T(text) : "";
   }
   function showAvatar(url) {
     var img = $("avatar-img");
@@ -370,7 +371,7 @@
     var verified = status === "verified";
     $("user-name").textContent = name;
     var badge = $("user-recovery-badge");
-    badge.textContent = verified ? "Recovery email verified" : (status === "pending" ? "Recovery email waiting for confirmation" : "No verified recovery email");
+    badge.textContent = T(verified ? "Recovery email verified" : (status === "pending" ? "Recovery email waiting for confirmation" : "No verified recovery email"));
     badge.className = "badge " + (verified ? "badge-ok" : (status === "pending" ? "badge-info" : "badge-warn"));
     setEmailState(status, profile && profile.recovery_email_hint);
     var enableEmail = FEATURES.recoveryEmail === true;
@@ -433,7 +434,7 @@
   /* ---------- start ---------- */
   function start() {
     if (!client.isConfigured()) {
-      say("warn", A.messageFor("not_configured_client") + " The account service has not been connected yet.");
+      say("warn", A.messageFor("not_configured_client") + T(" The account service has not been connected yet."));
       return;
     }
     if (!client.storageAvailable()) {
@@ -453,7 +454,7 @@
         return;
       }
       // The service could not be reached: keep the visitor signed in and show what we saved.
-      say("warn", r.message + " Showing the details saved on this device.");
+      say("warn", r.message + T(" Showing the details saved on this device."));
       renderUser(null);
     });
   }

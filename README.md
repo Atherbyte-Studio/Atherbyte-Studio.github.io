@@ -144,5 +144,10 @@ Each game page is its own page (its own repository), so it should carry its own 
 ## Principles
 
 - No fake claims: no invented statistics, clients, reviews or contact details.
-- No tracking, no third-party scripts, no paid services.
+- No analytics or tracking scripts of our own, and no paid services. The only third-party scripts are Google AdSense on public pages and Cloudflare Turnstile on the account and contact pages.
 - Fonts are the visitor's own system fonts, so nothing extra is downloaded.
+
+## Redesign v2 (bilingual, generated pages)
+
+Pages are generated: edit `content/site.mjs` (facts), `content/copy.en.mjs` / `content/copy.ar.mjs` (all words, same keys) or `tools/build.mjs` (layout), then run `node tools/build.mjs` and commit the output. English lives at `/…`, Arabic at `/ar/…`. `/account/` stays English and hand-written; the build only syncs its header and footer.
+Tests: `node --test "tests/*.test.*"`. The home hero 3D (`js/hero3d.js`) is plain WebGL, lazy and optional. The contact form posts to `POST /v1/contact` on the API Worker (see the `atherbyte-api` repository; its migration `003_contact.DRAFT.sql` must be applied first, otherwise the form says it is unavailable).

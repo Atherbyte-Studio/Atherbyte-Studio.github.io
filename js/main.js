@@ -1,67 +1,63 @@
 /*
-  main.js: the small amount of behaviour the Atherbyte Studio site needs.
-  No libraries. Each job is its own function; the list at the bottom runs them.
+  main.js: the small amount of behaviour the Atherbyte Studio site needs. No libraries.
 
-  The pages themselves (header, footer, product cards) are written by tools/build.mjs, so none of
-  that depends on JavaScript. This file only adds extras on top:
-
-    1. initGames        "Sign in to play" for games that ask for an account (only once accounts are set up)
-    2. initAccountLink  Shows the signed-in username in the header's Account button
-    3. initCopyEmail    Adds a "Copy email address" button on the Contact page
-    4. initMenu         The mobile menu button
-    5. initYear         Keeps the footer year current
-    6. initReveal       Gentle fade-in as sections scroll into view
+  Pages (header, footer, product cards) are written by tools/build.mjs, so none of that depends on
+  JavaScript. This file only adds extras on top:
+    1. initLang        remembers the chosen language and sends returning visitors to it
+    2. initAccountLink shows the signed-in username (and picture) in the header's Account button
+    3. initMenu        the mobile menu button
+    4. initYear        keeps the footer year current
+    5. initReveal      gentle fade-in as sections scroll into view
+    6. initTilt        pointer-driven depth on product previews (mouse and pen only)
+    7. initGlow        soft light following the pointer on cards
 */
 (function () {
   "use strict";
 
-  var CONFIG = window.ATHERBYTE_CONFIG || {};
+  var doc = document;
+  var root = doc.documentElement;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-  /* ---------- tiny helpers ---------- */
-  function $(selector, root) { return (root || document).querySelector(selector); }
-  function $all(selector, root) { return Array.prototype.slice.call((root || document).querySelectorAll(selector)); }
-
-  // Creates an element. Text is always inserted as plain text (never as HTML), which is the safe way.
-  function make(tag, className, text) {
-    var node = document.createElement(tag);
-    if (className) { node.className = className; }
-    if (text !== undefined && text !== null) { node.textContent = text; }
-    return node;
+  function $(s, r) { return (r || doc).querySelector(s); }
+  function $all(s, r) { return Array.prototype.slice.call((r || doc).querySelectorAll(s)); }
+  function make(tag, cls) { var n = doc.createElement(tag); if (cls) { n.className = cls; } return n; }
+  function store(key, value) {
+    try { if (value === undefined) { return window.localStorage.getItem(key); } window.localStorage.setItem(key, value); } catch (e) { /* storage blocked: the page still works */ }
+    return null;
   }
 
-  /* ---------- account (js/atherbyte-account.js; every use below copes with it being absent) ---------- */
   function accountClient() {
     try { return window.AtherbyteAccount && window.AtherbyteAccount.get ? window.AtherbyteAccount.get() : null; }
     catch (e) { return null; }
   }
 
-  /* ---------- 1. Games that need an account ---------- */
-  // A "Play Now" button says "Sign in to play" only when the game asks for an account (data-requires-account),
-  // the account service address is set, and nobody is signed in. Otherwise the button is left exactly as written.
-  function initGames() {
-    var account = accountClient();
-    if (!account || !account.isConfigured() || account.hasSession()) { return; }
-    $all("a[data-play][data-requires-account='true']").forEach(function (link) {
-      var game = link.getAttribute("href");
-      var hidden = $(".visually-hidden", link);
-      link.href = "/account/?next=" + encodeURIComponent(game);
-      link.firstChild.nodeValue = "Sign in to play";
-      if (hidden) { link.appendChild(hidden); }
+  /* ---------- 1. Language ---------- */
+  // Choosing a language is remembered on this device. A returning visitor who chose Arabic is taken to the
+  // Arabic version of an English page that has one (data-alt). Nothing is stored until a choice is made.
+  function initLang() {
+    $all("[data-lang]").forEach(function (link) {
+      link.addEventListener("click", function () { store("atherbyte-lang", link.getAttribute("data-lang")); });
     });
+    var isArabic = root.lang === "ar";
+    var alt = root.getAttribute("data-alt");
+    if (!isArabic && alt && store("atherbyte-lang") === "ar") {
+      window.location.replace(alt + window.location.search + window.location.hash);
+    }
   }
 
-  /* ---------- 2. Account button in the header ---------- */
+  /* ---------- 2. Account button ---------- */
   function initAccountLink() {
     var account = accountClient();
-    if (!account || !account.isConfigured()) { return; }
-    var label = $("[data-account-link] span");
-    if (!label) { return; }
     var link = $("[data-account-link]");
+    if (!account || !link || !account.isConfigured()) { return; }
+    var label = $("span", link);
     var icon = $("svg", link);
+    var fallback = link.getAttribute("data-signin") || "Sign in";
     var photo = null;
     function update() {
-      label.textContent = account.hasSession() ? account.username() : "Sign in";
-      // The account's profile picture (the same one every game shows), in place of the generic person icon.
+      var signedIn = account.hasSession();
+      label.textContent = signedIn ? account.username() : fallback;
       var url = account.avatarUrl ? account.avatarUrl() : "";
       if (url && !photo) {
         photo = make("img", "nav-avatar");
@@ -76,132 +72,132 @@
       }
     }
     update();
-    if (account.onChange) { account.onChange(update); }   // signing in or out on the Account page updates the button at once
-    if (account.hasSession() && account.refreshAvatar) { account.refreshAvatar(false).then(update); }   // at most one check an hour
+    if (account.onChange) { account.onChange(update); }
+    if (account.hasSession() && account.refreshAvatar) { account.refreshAvatar(false).then(update); }
   }
 
-  /* ---------- 3. Copy the contact email ---------- */
-  function initCopyEmail() {
-    var email = String(CONFIG.email || "").trim();
-    var actions = $("#contact-fallback .contact-actions");
-    if (!actions || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { return; }
-
-    var copy = make("button", "btn btn-secondary", "Copy email address");
-    copy.type = "button";
-    copy.id = "copy-email";
-    actions.appendChild(copy);
-
-    var status = make("p", "copy-status");
-    status.id = "copy-status";
-    status.setAttribute("role", "status");
-    status.setAttribute("aria-live", "polite");
-    actions.parentNode.appendChild(status);
-
-    function say(message) {
-      status.textContent = message;
-      window.setTimeout(function () { status.textContent = ""; }, 4000);
-    }
-    copy.addEventListener("click", function () {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(email).then(
-          function () { say("Email address copied."); },
-          function () { say("Couldn't copy automatically. Please select the address and copy it."); }
-        );
-      } else {
-        say("Couldn't copy automatically. Please select the address and copy it.");
-      }
-    });
-  }
-
-  /* ---------- 4. Mobile menu ---------- */
+  /* ---------- 3. Mobile menu ---------- */
   function initMenu() {
     var toggle = $(".nav-toggle");
     var nav = $("#site-nav");
     if (!toggle || !nav) { return; }
-
-    var wide = window.matchMedia("(min-width: 1100px)");
-
+    var wide = window.matchMedia("(min-width: 900px)");
     function isOpen() { return toggle.getAttribute("aria-expanded") === "true"; }
     function setOpen(open) {
       toggle.setAttribute("aria-expanded", String(open));
-      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      toggle.setAttribute("aria-label", toggle.getAttribute(open ? "data-close" : "data-open") || "Menu");
       nav.classList.toggle("is-open", open);
     }
-
     toggle.addEventListener("click", function () { setOpen(!isOpen()); });
-
-    // Choosing a link closes the menu.
-    nav.addEventListener("click", function (event) {
-      if (event.target.closest && event.target.closest("a")) { setOpen(false); }
-    });
-
-    // Escape closes the menu and puts focus back on the button.
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && isOpen()) { setOpen(false); toggle.focus(); }
-    });
-
-    // Tapping anywhere outside closes it too.
-    document.addEventListener("click", function (event) {
-      if (isOpen() && !nav.contains(event.target) && !toggle.contains(event.target)) { setOpen(false); }
-    });
-
-    // If the window becomes wide (e.g. phone rotated), reset to the desktop layout.
-    function onResize() { if (wide.matches) { setOpen(false); } }
-    if (wide.addEventListener) { wide.addEventListener("change", onResize); } else { wide.addListener(onResize); }
+    nav.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("a")) { setOpen(false); } });
+    doc.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen()) { setOpen(false); toggle.focus(); } });
+    function onWide(e) { if (e.matches) { setOpen(false); } }
+    if (wide.addEventListener) { wide.addEventListener("change", onWide); } else if (wide.addListener) { wide.addListener(onWide); }
   }
 
-  /* ---------- 5. Footer year ---------- */
+  /* ---------- 4. Year ---------- */
   function initYear() {
-    var year = String(new Date().getFullYear());
-    $all("[data-year]").forEach(function (node) { node.textContent = year; });
+    var y = String(new Date().getFullYear());
+    $all("[data-year]").forEach(function (n) { n.textContent = y; });
   }
 
-  /* ---------- 6. Fade-in on scroll ---------- */
+  /* ---------- 5. Reveal on scroll ---------- */
   function initReveal() {
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || !("IntersectionObserver" in window)) { return; }   // Content just stays visible.
-
     var items = $all(".reveal");
-    if (!items.length) { return; }
-
-    // This class is what makes the CSS hide the items first. Added only now, so a
-    // script error earlier in this file can never leave the page blank.
-    document.documentElement.classList.add("reveal-ready");
-
-    items.forEach(function (item) {
-      var position = Array.prototype.indexOf.call(item.parentElement.children, item);
-      item.style.setProperty("--reveal-delay", (position % 4) * 0.08 + "s");
+    if (!items.length || reduce || !("IntersectionObserver" in window)) { return; }
+    root.classList.add("reveal-ready");
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-visible"); io.unobserve(en.target); } });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    items.forEach(function (el, i) {
+      el.style.setProperty("--reveal-delay", ((i % 4) * 70) + "ms");
+      io.observe(el);
     });
+    // If anything is still hidden after a moment (for example a print or snapshot), show it.
+    window.setTimeout(function () { items.forEach(function (el) { el.classList.add("is-visible"); }); }, 6000);
+  }
 
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) { return; }
-        var node = entry.target;
-        node.classList.add("is-visible");
-        observer.unobserve(node);
-        // After the fade finishes, drop the helper classes so hover effects are instant again.
-        window.setTimeout(function () {
-          node.classList.remove("reveal", "is-visible");
-          node.style.removeProperty("--reveal-delay");
-        }, 1500);
+  /* ---------- 6. Tilt ---------- */
+  // Only a real mouse or pen moves the preview. Touch keeps the resting pose; keyboard focus uses the CSS
+  // :focus-within pose. Nothing important depends on this.
+  function initTilt() {
+    if (reduce || !finePointer) { return; }
+    $all("[data-tilt]").forEach(function (stage) {
+      var frame = 0;
+      var x = 0, y = 0;
+      function paint() {
+        frame = 0;
+        var r = stage.getBoundingClientRect();
+        var px = (x - r.left) / r.width, py = (y - r.top) / r.height;
+        px = Math.max(0, Math.min(1, px)); py = Math.max(0, Math.min(1, py));
+        stage.style.setProperty("--ry", ((px - 0.5) * 14).toFixed(2) + "deg");
+        stage.style.setProperty("--rx", ((0.5 - py) * 10).toFixed(2) + "deg");
+        stage.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+        stage.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+      }
+      // The card's stretched title link covers the stage, so listen on the whole card.
+      var host = stage.closest(".pcard") || stage;
+      host.addEventListener("pointermove", function (e) {
+        if (e.pointerType === "touch") { return; }
+        x = e.clientX; y = e.clientY;
+        stage.classList.add("is-tilting");
+        if (!frame) { frame = window.requestAnimationFrame(paint); }
       });
-    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
-
-    items.forEach(function (item) { observer.observe(item); });
+      host.addEventListener("pointerleave", function () {
+        stage.classList.remove("is-tilting");
+        ["--rx", "--ry"].forEach(function (p) { stage.style.removeProperty(p); });
+      });
+    });
   }
 
-  /* ---------- run everything ---------- */
-  // Each job runs on its own, so an error in one can never stop the menu or the page from working.
-  function run(job) {
-    try { job(); } catch (error) {
-      if (window.console && console.error) { console.error("Atherbyte site:", error); }
-    }
+  /* ---------- 6b. Card light and lean ---------- */
+  // The whole card leans a few degrees toward the pointer and its rim lights up where the pointer is.
+  function initCards() {
+    if (reduce || !finePointer) { return; }
+    $all(".pcard").forEach(function (card) {
+      var frame = 0, ex = 0, ey = 0;
+      function paint() {
+        frame = 0;
+        var r = card.getBoundingClientRect();
+        var px = (ex - r.left) / r.width, py = (ey - r.top) / r.height;
+        card.style.setProperty("--cx", (px * 100).toFixed(1) + "%");
+        card.style.setProperty("--cy", (py * 100).toFixed(1) + "%");
+        card.style.setProperty("--cry", ((px - 0.5) * 5).toFixed(2) + "deg");
+        card.style.setProperty("--crx", ((0.5 - py) * 4).toFixed(2) + "deg");
+      }
+      card.addEventListener("pointermove", function (e) {
+        if (e.pointerType === "touch") { return; }
+        ex = e.clientX; ey = e.clientY;
+        if (!frame) { frame = window.requestAnimationFrame(paint); }
+      });
+      card.addEventListener("pointerleave", function () {
+        ["--crx", "--cry"].forEach(function (p) { card.style.removeProperty(p); });
+      });
+    });
   }
 
-  run(initGames);
-  run(initAccountLink);
-  run(initCopyEmail);
-  run(initMenu);
-  run(initYear);
-  run(initReveal);
+  /* ---------- 6c. Header depth once the page scrolls ---------- */
+  function initHeader() {
+    var header = document.querySelector(".site-header");
+    if (!header) { return; }
+    function on() { header.classList.toggle("is-scrolled", (window.pageYOffset || root.scrollTop) > 8); }
+    window.addEventListener("scroll", on, { passive: true });
+    on();
+  }
+
+  /* ---------- 7. Glow ---------- */
+  function initGlow() {
+    if (reduce || !finePointer) { return; }
+    $all("[data-glow]").forEach(function (card) {
+      card.addEventListener("pointermove", function (e) {
+        var r = card.getBoundingClientRect();
+        card.style.setProperty("--mx", (e.clientX - r.left) + "px");
+        card.style.setProperty("--my", (e.clientY - r.top) + "px");
+      });
+    });
+  }
+
+  [initLang, initAccountLink, initMenu, initYear, initReveal, initTilt, initCards, initHeader, initGlow].forEach(function (fn) {
+    try { fn(); } catch (e) { /* one failing extra must never break the page */ }
+  });
 })();
