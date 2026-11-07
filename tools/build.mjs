@@ -17,7 +17,9 @@ import { ACCOUNT_INDEX, ACCOUNT_RESET } from "../content/account.ar.mjs";
    The address changes exactly when the file's content changes, so a browser or CDN can never pair new HTML with an
    old stylesheet or script. File names stay as they are because the games load some of these files by name. */
 const ASSET_RE = new RegExp('((?:href|src)="/((?:css|js)/[^"?]+\\.(?:css|js)))(?:\\?v=[0-9a-f]+)?"', "g");
-const hashOf = (p) => createHash("sha256").update(readFileSync(join(ROOT, p))).digest("hex").slice(0, 10);
+// CRLF is normalised to LF before hashing: git stores (and GitHub Pages serves) LF even when a Windows checkout has CRLF,
+// so the hash in the URL equals the SHA-256 of the bytes the browser actually downloads.
+const hashOf = (p) => createHash("sha256").update(readFileSync(join(ROOT, p), "utf8").replace(/\r\n/g, "\n")).digest("hex").slice(0, 10);
 const stamp = (html) => html.replace(ASSET_RE, (m, ref, path) => `${ref}?v=${hashOf(path)}"`);
 const unstamp = (html) => html.replace(new RegExp('(\\.(?:css|js))\\?v=[0-9a-f]+"', "g"), '$1"');
 const writeFileSync = (file, data) => writeRaw(file, typeof data === "string" && String(file).endsWith(".html") ? stamp(data) : data);

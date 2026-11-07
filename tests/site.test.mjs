@@ -113,7 +113,7 @@ test("every page references its CSS and JS with a ?v= content hash that matches 
   let seen = 0;
   for (const f of pages) {
     const h = readFileSync(f, "utf8");
-    for (const m of h.matchAll(ref)) { seen++; assert.equal(m[2], createHash("sha256").update(readFileSync(m[1])).digest("hex").slice(0, 10), `${f} ${m[1]}`); }
+    for (const m of h.matchAll(ref)) { seen++; assert.equal(m[2], createHash("sha256").update(readFileSync(m[1], "utf8").replace(/\r\n/g, "\n")).digest("hex").slice(0, 10), `${f} ${m[1]}`); }
     assert.doesNotMatch(h, /(?:href|src)="\/(?:css|js)\/[^"?]+\.(?:css|js)"/, `${f} has an unversioned asset`);
     assert.match(h, /\/css\/styles\.css\?v=/, f);
     if (!f.includes("404")) assert.match(h, /\/js\/main\.js\?v=/, f);
