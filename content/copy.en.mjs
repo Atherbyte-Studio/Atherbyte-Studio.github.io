@@ -262,7 +262,7 @@ export default {
             "If you link a Grid Snake player to your account: the link between the player and your account, the player's name and best score (which can appear on the Grid Snake leaderboard), and the saved progress, including up to 20 earlier saved copies. Each link attempt is also recorded in a log (account, player, outcome and time; no recovery codes or names)."
           ] },
           { h3: "Project form" },
-          { p: "If you use the project inquiry form we receive what you type: your name, email, project type and description, and, if you choose to give them, a budget range, a reference link and a preferred contact method. The same security check and rate limits apply. You can also email us directly instead." }
+          { p: "If you use the project inquiry form we receive what you type: your name, email, project type and description, and, if you choose to give them, a budget range, a reference link and a preferred contact method. The same security check and rate limits apply. When an inquiry is stored, an email with what you typed is also sent to our public contact address, atherbyte.studio@gmail.com, so that we see it and can reply. You can also email us directly instead." }
         ] },
       { id: "why", h: "3. Why we use it, and on what basis",
         body: [
@@ -281,6 +281,7 @@ export default {
             "GitHub Pages: hosts the website.",
             "Cloudflare: runs our API (Cloudflare Workers), the Turnstile check and rate limiting.",
             "Supabase: stores account records, recovery email status, profile pictures, Grid Snake account links and saves, and project inquiries.",
+            "Resend: delivers the notification email that tells us about a new project inquiry. The email goes only to our contact address.",
             "An email delivery provider configured in Supabase sends verification and reset emails. Google (Gmail) receives emails you send to us.",
             "Google AdSense: advertising script on public pages, as described above."
           ] },
@@ -294,7 +295,7 @@ export default {
         ] },
       { id: "retention", h: "6. How long we keep it",
         body: [
-          { p: "Account information is kept until you ask us to delete your account. Access tokens are short-lived, and your session is revoked when you sign out. You can remove your profile picture yourself. Project inquiries sent through the form are kept for 12 months and then deleted by us. Earlier saved copies of Grid Snake progress are capped at 20 per player. Account records are not deleted automatically." },
+          { p: "Account information is kept until you ask us to delete your account. Access tokens are short-lived, and your session is revoked when you sign out. You can remove your profile picture yourself. Project inquiries sent through the form are kept for 12 months and then deleted by us. A copy of the inquiry's details is also sent by email to our contact address and may be kept in that mailbox in line with the mailbox's own retention rules. Earlier saved copies of Grid Snake progress are capped at 20 per player. Account records are not deleted automatically." },
           { p: "There is no delete button on the account page. To have your account deleted, email atherbyte.studio@gmail.com from the address you used and tell us your username; the same applies to any other information you want deleted. We carry out deletion by hand, and removing Grid Snake player records is a separate manual step. We delete information we are able to delete, and we cannot guarantee that copies held by providers, backups or content you published elsewhere disappear immediately." }
         ] },
       { id: "security", h: "7. How we protect it",
